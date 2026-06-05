@@ -2,6 +2,14 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { getSupabaseEnv } from '@/lib/supabase/env'
 import { OPS_ENTRY_COOKIE } from '@/lib/platform/ops-cookie'
+import {
+  getOpsHost,
+  getPublicAppUrl,
+  hostSplitEnabled,
+  isOpsHost,
+  isPublicAppHost,
+  opsOrigin,
+} from '@/lib/platform/ops-host'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -31,6 +39,51 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const pathname = request.nextUrl.pathname
+  const requestHost = request.headers.get('host')
+  const proto = request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol.replace(':', '')
+
+  if (hostSplitEnabled()) {
+    const onOps = isOpsHost(requestHost)
+    const onPublic = isPublicAppHost(requestHost)
+
+    if (onPublic && pathname.startsWith('/ops')) {
+      const dest = new URL(`${pathname}${request.nextUrl.search}`, opsOrigin(proto))
+      return NextResponse.redirect(dest)
+    }
+
+    if (onOps) {
+      if (pathname === '/') {
+        const url = request.nextUrl.clone()
+        url.pathname = '/ops/login'
+        return NextResponse.redirect(url)
+      }
+
+      const allowedOnOpsHost =
+        pathname.startsWith('/ops') ||
+        pathname.startsWith('/api/') ||
+        pathname.startsWith('/change-password') ||
+        pathname.startsWith('/reset-password') ||
+        pathname.startsWith('/_not-found')
+
+      if (!allowedOnOpsHost) {
+        const publicOrigin = getPublicAppUrl()
+        if (publicOrigin) {
+          const dest = new URL(pathname === '/' ? '/' : pathname, publicOrigin)
+          dest.search = request.nextUrl.search
+          return NextResponse.redirect(dest)
+        }
+        const url = request.nextUrl.clone()
+        url.pathname = '/_not-found'
+        return NextResponse.rewrite(url)
+      }
+    }
+
+    if (!onOps && !onPublic && getOpsHost()) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/_not-found'
+      return NextResponse.rewrite(url)
+    }
+  }
 
   const isPublicMarketing =
     pathname === '/' ||
@@ -70,7 +123,10 @@ export async function updateSession(request: NextRequest) {
 
   if (!user && !isPublicMarketing && (isAppRoute || (isOpsRoute && !isOpsLogout))) {
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = isOpsRoute ? '/ops/login' : '/login'
+    if (isOpsRoute && url.searchParams.has('next') === false) {
+      url.searchParams.set('next', pathname)
+    }
     return NextResponse.redirect(url)
   }
 

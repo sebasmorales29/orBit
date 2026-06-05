@@ -3,25 +3,30 @@ import {
   getSessionUserId,
   isSuperAdminEmail,
 } from '@/lib/platform/admin'
-import { createClient } from '@/lib/supabase/server'
+import {
+  getOpsAbsoluteHref,
+  getPublicSiteAbsoluteHref,
+  hostSplitEnabled,
+} from '@/lib/platform/ops-host'
 
 export type SuperAdminBridge = {
-  opsHref: '/ops'
+  opsHref: string
   /** Landing pública (sitio public-facing). */
-  publicAppHref: '/'
+  publicAppHref: string
 }
 
-/** Puente solo para el super admin: /ops ↔ app pública o tenant */
+/** Puente solo para el super admin: consola /ops ↔ sitio público */
 export async function getSuperAdminBridge(): Promise<SuperAdminBridge | null> {
+  if (hostSplitEnabled()) return null
+
   const email = await getSessionUserEmail()
   if (!isSuperAdminEmail(email)) return null
 
   const userId = await getSessionUserId()
   if (!userId) return null
 
-  // Nota: aunque el super admin tenga tenant, desde /ops queremos ir al sitio público (landing),
-  // no a la app del tenant.
-  void createClient
-  void userId
-  return { opsHref: '/ops', publicAppHref: '/' }
+  return {
+    opsHref: getOpsAbsoluteHref(),
+    publicAppHref: getPublicSiteAbsoluteHref(),
+  }
 }

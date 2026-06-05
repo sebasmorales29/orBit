@@ -4,6 +4,7 @@ import {
   getSuperAdminEmail,
   isPlatformAdminEmail,
 } from '@/lib/platform/admin'
+import { getOpsAbsoluteHref, getPublicSiteAbsoluteHref, hostSplitEnabled } from '@/lib/platform/ops-host'
 import { isServiceRoleConfigured, isSupabaseConfigured } from '@/lib/supabase/env'
 
 type OpsConfigIssue = 'service_role' | 'super_admin' | 'not_admin' | 'supabase'
@@ -69,8 +70,18 @@ export async function OpsConfigNotice() {
         )}
       </ul>
 
-      <Link href="/hoy" className="inline-block text-[13px] text-accent hover:underline">
-        Volver a la app
+      {hostSplitEnabled() && (
+        <p className="text-[12px] text-muted">
+          Consola en host dedicado:{' '}
+          <code className="text-foreground">{getOpsAbsoluteHref()}</code>
+        </p>
+      )}
+
+      <Link
+        href={hostSplitEnabled() ? getPublicSiteAbsoluteHref() : '/hoy'}
+        className="inline-block text-[13px] text-accent hover:underline"
+      >
+        {hostSplitEnabled() ? 'Ir al sitio público' : 'Volver a la app'}
       </Link>
     </div>
   )
