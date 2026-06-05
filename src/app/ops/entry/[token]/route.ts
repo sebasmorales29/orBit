@@ -6,7 +6,15 @@ import { getOpsMfaStatus } from '@/lib/platform/ops-mfa'
 function redirectWithCookies(url: URL, from: NextResponse) {
   const next = NextResponse.redirect(url)
   from.cookies.getAll().forEach((cookie) => {
-    next.cookies.set(cookie.name, cookie.value)
+    next.cookies.set(cookie.name, cookie.value, {
+      path: cookie.path,
+      domain: cookie.domain,
+      expires: cookie.expires,
+      maxAge: cookie.maxAge,
+      httpOnly: cookie.httpOnly,
+      secure: cookie.secure,
+      sameSite: cookie.sameSite as 'lax' | 'strict' | 'none' | undefined,
+    })
   })
   return next
 }

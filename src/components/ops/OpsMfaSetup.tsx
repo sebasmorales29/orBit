@@ -10,9 +10,14 @@ import { useToast } from '@/components/ui/toast'
 interface OpsMfaSetupProps {
   hasVerifiedFactor: boolean
   sessionAal2: boolean
+  nextHref?: string
 }
 
-export function OpsMfaSetup({ hasVerifiedFactor, sessionAal2 }: OpsMfaSetupProps) {
+async function confirmOpsSession() {
+  await fetch('/api/ops/confirm-session', { method: 'POST' })
+}
+
+export function OpsMfaSetup({ hasVerifiedFactor, sessionAal2, nextHref = '/ops' }: OpsMfaSetupProps) {
   const router = useRouter()
   const toast = useToast()
   const supabase = createClient()
@@ -60,8 +65,9 @@ export function OpsMfaSetup({ hasVerifiedFactor, sessionAal2 }: OpsMfaSetupProps
       return
     }
     toast.success('MFA activado')
+    await confirmOpsSession()
     router.refresh()
-    router.push('/ops')
+    router.push(nextHref)
   }
 
   async function verifySession(e: React.FormEvent) {
@@ -93,8 +99,9 @@ export function OpsMfaSetup({ hasVerifiedFactor, sessionAal2 }: OpsMfaSetupProps
       return
     }
     toast.success('Sesión verificada')
+    await confirmOpsSession()
     router.refresh()
-    router.push('/ops')
+    router.push(nextHref)
   }
 
   if (hasVerifiedFactor && !sessionAal2) {

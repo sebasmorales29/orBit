@@ -1,7 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { getSupabaseEnv } from '@/lib/supabase/env'
-import { OPS_ENTRY_COOKIE } from '@/lib/platform/ops-cookie'
 import {
   getOpsHost,
   getPublicAppUrl,
@@ -145,21 +144,6 @@ export async function updateSession(request: NextRequest) {
     url.pathname = '/change-password'
     url.searchParams.set('next', pathname)
     return NextResponse.redirect(url)
-  }
-
-  // /ops solo se puede acceder si antes entraste por /ops/entry/<token>
-  // (y además cumplís el gate dentro de /ops/layout.tsx).
-  if (user && isOpsRoute && !isOpsEntry && !isOpsLogout && !isOpsLogin && !isOpsMfa) {
-    const hasCookie = request.cookies.get(OPS_ENTRY_COOKIE)?.value === '1'
-    if (!hasCookie) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/ops/login'
-      url.searchParams.set('reason', 'entry')
-      if (!url.searchParams.has('next')) {
-        url.searchParams.set('next', pathname)
-      }
-      return NextResponse.redirect(url)
-    }
   }
 
   if (user && isAuthRoute) {

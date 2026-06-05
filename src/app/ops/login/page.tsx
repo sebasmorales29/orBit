@@ -1,9 +1,14 @@
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { BrandLogo } from '@/components/brand/BrandLogo'
 import { OpsMfaSetup } from '@/components/ops/OpsMfaSetup'
-import { OPS_ENTRY_COOKIE } from '@/lib/platform/ops-cookie'
+import { assertPlatformAdmin } from '@/lib/platform/admin'
 import { getOpsMfaStatus } from '@/lib/platform/ops-mfa'
+
+function safeOpsNext(next: string | string[] | undefined): string {
+  const raw = typeof next === 'string' ? next : '/ops'
+  if (!raw.startsWith('/ops')) return '/ops'
+  return raw
+}
 
 export default async function OpsLoginPage({
   searchParams,
@@ -11,11 +16,24 @@ export default async function OpsLoginPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const params = await searchParams
-  const entryExpired = params.reason === 'entry'
-  const cookieStore = await cookies()
-  const hasEntry = cookieStore.get(OPS_ENTRY_COOKIE)?.value === '1'
+  const next = safeOpsNext(params.next)
+  const gate = await assertPlatformAdmin()
 
-  if (!hasEntry) {
+  if (!gate.ok) {
+    const title =
+      gate.reason === 'forbidden'
+        ? 'Sin permiso'
+        : gate.reason === 'not_configured'
+          ? 'Ops no configurado'
+          : 'Enlace requerido'
+
+    const body =
+      gate.reason === 'forbidden'
+        ? 'Tu cuenta no tiene acceso a Operaciones. Pedile acceso al super administrador de orBit.'
+        : gate.reason === 'not_configured'
+          ? 'Falta configurar ORBIT_PLATFORM_SUPER_ADMIN_EMAIL y SUPABASE_SERVICE_ROLE_KEY en el servidor.'
+          : 'Abrí tu enlace privado de entrada o iniciá sesión en orBit con la cuenta de super administrador.'
+
     return (
       <div className="min-h-dvh bg-page px-4 py-16">
         <div className="mx-auto max-w-md">
@@ -27,17 +45,24 @@ export default async function OpsLoginPage({
                 <p className="text-[14px] font-semibold text-foreground">Acceso privado</p>
               </div>
             </div>
-            <h1 className="mt-6 text-2xl font-semibold text-foreground">
-              {entryExpired ? 'Acceso expirado' : 'Enlace requerido'}
-            </h1>
-            <p className="mt-2 text-[13px] leading-relaxed text-muted">
-              {entryExpired
-                ? 'Tu acceso a Ops expiró o la cookie de entrada no está activa. Volvé a abrir tu enlace privado de entrada.'
-                : 'Esta consola no tiene inicio de sesión público. Usá el enlace de acceso privado de orBit.'}
-            </p>
-            <p className="mt-3 rounded-xl border border-border bg-surface-raised px-3 py-2 font-mono text-[12px] text-foreground">
-              /ops/entry/TU_TOKEN
-            </p>
+            <h1 className="mt-6 text-2xl font-semibold text-foreground">{title}</h1>
+            <p className="mt-2 text-[13px] leading-relaxed text-muted">{body}</p>
+            {gate.reason === 'unauthenticated' && (
+              <>
+                <p className="mt-4 text-[13px] font-medium text-foreground">Opción 1 — enlace privado:</p>
+                <p className="mt-2 rounded-xl border border-border bg-surface-raised px-3 py-2 font-mono text-[12px] text-foreground">
+                  /ops/entry/TU_TOKEN
+                </p>
+                <p className="mt-4 text-[13px] font-medium text-foreground">Opción 2 — ya tenés cuenta:</p>
+                <p className="mt-2 text-[13px] text-muted">
+                  Iniciá sesión en{' '}
+                  <a href={`/login?next=${encodeURIComponent(next)}`} className="text-accent hover:underline">
+                    orBit
+                  </a>{' '}
+                  con el correo de super administrador y volvé a esta página.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -50,14 +75,14 @@ export default async function OpsLoginPage({
     return (
       <div className="min-h-dvh bg-page px-4 py-16">
         <div className="mx-auto max-w-md rounded-3xl border border-border bg-surface p-6 text-[13px] text-muted">
-          No se pudo validar tu acceso. Volvé a abrir tu enlace de entrada privado.
+          No se pudo validar tu acceso. Cerrá sesión, volvé a abrir tu enlace de entrada o iniciá sesión de nuevo.
         </div>
       </div>
     )
   }
 
   if (!status.mfaRequired || status.satisfied) {
-    redirect('/ops')
+    redirect(next)
   }
 
   return (
@@ -73,7 +98,7 @@ export default async function OpsLoginPage({
           </div>
 
           <p className="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[12px] text-muted">
-            Enlace de entrada aceptado. Este es el último paso antes de Operaciones.
+            Sesión válida como <span className="text-foreground">{gate.email}</span>. Completá MFA para entrar.
           </p>
 
           <h1 className="mt-4 text-2xl font-semibold text-foreground">Código de autenticador</h1>
@@ -85,6 +110,7 @@ export default async function OpsLoginPage({
             <OpsMfaSetup
               hasVerifiedFactor={status.hasVerifiedFactor}
               sessionAal2={status.sessionAal2}
+              nextHref={next}
             />
           </div>
         </div>
