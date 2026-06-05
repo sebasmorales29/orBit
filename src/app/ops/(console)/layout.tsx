@@ -1,3 +1,4 @@
+import { headers } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import { assertPlatformAdmin, isOpsAccessTableReady } from '@/lib/platform/admin'
 import { BrandLogo } from '@/components/brand/BrandLogo'
@@ -8,7 +9,9 @@ export default async function OpsConsoleLayout({ children }: { children: React.R
   const gate = await assertPlatformAdmin()
   if (!gate.ok) {
     if (gate.reason === 'unauthenticated') {
-      redirect('/login?next=/ops')
+      const pathname = (await headers()).get('x-pathname') ?? '/ops'
+      const next = pathname.startsWith('/ops') ? pathname : '/ops'
+      redirect(`/login?next=${encodeURIComponent(next)}`)
     }
     notFound()
   }

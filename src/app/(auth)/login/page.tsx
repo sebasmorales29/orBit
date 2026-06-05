@@ -61,7 +61,14 @@ function LoginInner() {
       (data.user?.user_metadata as Record<string, unknown> | undefined)?.must_change_password
     )
     const next = sp.get('next') ?? '/hoy'
-    router.push(mustChange ? `/change-password?next=${encodeURIComponent(next)}` : next)
+    const destination = mustChange ? `/change-password?next=${encodeURIComponent(next)}` : next
+
+    if (destination.startsWith('/ops')) {
+      window.location.assign(destination)
+      return
+    }
+
+    router.push(destination)
     router.refresh()
   }
 
