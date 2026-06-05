@@ -53,7 +53,7 @@ export async function updateSession(request: NextRequest) {
     if (onOps) {
       if (pathname === '/') {
         const url = request.nextUrl.clone()
-        url.pathname = '/ops/login'
+        url.pathname = '/ops'
         return NextResponse.redirect(url)
       }
 
@@ -99,10 +99,17 @@ export async function updateSession(request: NextRequest) {
   const isResetPassword = pathname.startsWith('/reset-password')
 
   const isOpsRoute = pathname.startsWith('/ops')
-  const isOpsEntry = pathname === '/ops/entry' || pathname.startsWith('/ops/entry/')
   const isOpsLogin = pathname === '/ops/login'
   const isOpsMfa = pathname === '/ops/mfa'
   const isOpsLogout = pathname === '/ops/logout'
+
+  if (isOpsLogin || isOpsMfa) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    const next = request.nextUrl.searchParams.get('next') ?? '/ops'
+    url.searchParams.set('next', next.startsWith('/ops') ? next : '/ops')
+    return NextResponse.redirect(url)
+  }
 
   if (isOpsRoute) {
     supabaseResponse.headers.set('X-Robots-Tag', 'noindex, nofollow')
@@ -125,11 +132,11 @@ export async function updateSession(request: NextRequest) {
   if (
     !user &&
     !isPublicMarketing &&
-    (isAppRoute || (isOpsRoute && !isOpsLogout && !isOpsLogin && !isOpsEntry))
+    (isAppRoute || (isOpsRoute && !isOpsLogout))
   ) {
     const url = request.nextUrl.clone()
-    url.pathname = isOpsRoute ? '/ops/login' : '/login'
-    if (isOpsRoute && url.searchParams.has('next') === false) {
+    url.pathname = '/login'
+    if (isOpsRoute && !url.searchParams.has('next')) {
       url.searchParams.set('next', pathname)
     }
     return NextResponse.redirect(url)
@@ -148,7 +155,9 @@ export async function updateSession(request: NextRequest) {
 
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone()
-    url.pathname = '/hoy'
+    const next = request.nextUrl.searchParams.get('next')
+    url.pathname = next && next.startsWith('/') ? next : '/hoy'
+    url.search = ''
     return NextResponse.redirect(url)
   }
 

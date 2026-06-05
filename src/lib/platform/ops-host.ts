@@ -83,9 +83,7 @@ export function getPublicSiteAbsoluteHref(): string {
   return getPublicAppUrl() ?? '/'
 }
 
-/** URL de entrada secreta del super admin. */
-export function getOpsEntryHref(token: string): string {
-  const path = `/ops/entry/${token}`
-  if (!hostSplitEnabled()) return path
-  return `${opsOrigin()}${path}`
+/** URL de la consola de operaciones (sin enlaces públicos; solo bookmark del super admin). */
+export function getOpsConsoleHref(): string {
+  return getOpsAbsoluteHref()
 }

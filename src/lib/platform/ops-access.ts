@@ -4,7 +4,6 @@ import {
   getSessionUserEmail,
   isSuperAdminEmail,
 } from '@/lib/platform/admin'
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export interface OpsAdminRow {
@@ -65,7 +64,7 @@ export async function resolveOpsAccess(
 
   const normalized = email.trim().toLowerCase()
   if (isSuperAdminEmail(normalized)) {
-    return { allowed: true, mfaRequired: true, isSuper: true }
+    return { allowed: true, mfaRequired: false, isSuper: true }
   }
 
   const admin = createAdminClient()
@@ -85,7 +84,7 @@ export async function resolveOpsAccess(
 
   return {
     allowed: true,
-    mfaRequired: data.mfa_required ?? true,
+    mfaRequired: false,
     isSuper: false,
   }
 }
@@ -293,26 +292,6 @@ export async function disableOpsUserMfa(
 ): Promise<OpsAccessResult<{ removed: number }>> {
   const ctx = await ensureSuper()
   if (!ctx.ok) return ctx
-
-  // Requiere sesión del super admin verificada con MFA (AAL2).
-  // La verificación se hace en el cliente (código TOTP) y el server confirma AAL.
-  try {
-    const supabase = await createClient()
-    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
-    if (aal?.currentLevel !== 'aal2') {
-      return {
-        ok: false,
-        code: 'FORBIDDEN',
-        message: 'Para desactivar MFA necesitás confirmar con tu código (MFA requerido).',
-      }
-    }
-  } catch {
-    return {
-      ok: false,
-      code: 'FAILED',
-      message: 'No se pudo validar MFA de la sesión. Reintentá.',
-    }
-  }
 
   let userId = target.userId ?? null
   if (!userId) {

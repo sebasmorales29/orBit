@@ -42,7 +42,7 @@ export type PlatformUserDetailResult =
 
 function gateMessage(gate: { ok: false; reason: 'unauthenticated' | 'forbidden' | 'not_configured' }): string {
   if (gate.reason === 'unauthenticated') {
-    return 'Sesión expirada. Volvé a abrir tu enlace de entrada (/ops/entry/…).'
+    return 'Sesión expirada. Volvé a iniciar sesión en orBit.'
   }
   if (gate.reason === 'not_configured') {
     return 'Ops no está configurado en el servidor (super admin o service role).'

@@ -24,7 +24,7 @@ export default async function OpsLayout({ children }: { children: React.ReactNod
     )
   }
 
-  // Login, MFA y entry no pasan por el gate de (console)/layout — evita loop en /ops/login.
+  // /ops/login redirige al login público; la consola vive en (console)/layout.
   return (
     <div className="min-h-dvh bg-page">
       <main className={`${appShellClass} py-8`}>

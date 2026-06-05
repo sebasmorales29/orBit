@@ -1,5 +1,4 @@
 import { notFound, redirect } from 'next/navigation'
-import { getOpsMfaStatus } from '@/lib/platform/ops-mfa'
 import { assertPlatformAdmin, isOpsAccessTableReady } from '@/lib/platform/admin'
 import { BrandLogo } from '@/components/brand/BrandLogo'
 import { OpsNav } from '@/components/ops/OpsNav'
@@ -8,14 +7,10 @@ import { appShellClass } from '@/components/layout/app-layout'
 export default async function OpsConsoleLayout({ children }: { children: React.ReactNode }) {
   const gate = await assertPlatformAdmin()
   if (!gate.ok) {
-    if (gate.reason === 'unauthenticated') redirect('/ops/login')
+    if (gate.reason === 'unauthenticated') {
+      redirect('/login?next=/ops')
+    }
     notFound()
-  }
-
-  const status = await getOpsMfaStatus()
-
-  if (status?.mfaRequired && !status.satisfied) {
-    redirect('/ops/login')
   }
 
   const tableReady = await isOpsAccessTableReady()

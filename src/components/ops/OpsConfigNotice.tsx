@@ -80,8 +80,8 @@ export async function OpsConfigNotice() {
         <p className="rounded-xl border border-amber-500/35 bg-amber-500/10 p-3 text-[12px] text-muted">
           <strong className="text-foreground">ORBIT_OPS_HOST={getOpsHost()}</strong> no funciona en
           Vercel Hobby (no podés agregar <code>ops.*.vercel.app</code>). Borrá esa variable o usá un
-          dominio propio (ej. <code>ops.tudominio.com</code>). Mientras tanto, entrá por{' '}
-          <code>/ops/entry/&lt;token&gt;</code> en el dominio principal.
+          dominio propio (ej. <code>ops.tudominio.com</code>). Mientras tanto, usá{' '}
+          <code>/ops</code> en el dominio principal.
         </p>
       )}
 

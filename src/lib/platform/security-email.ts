@@ -1,7 +1,6 @@
 import crypto from 'crypto'
 import { assertSuperAdmin } from '@/lib/platform/admin'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/server'
 import { sendEmailResend } from '@/lib/email/resend'
 
 export type Purpose =
@@ -30,20 +29,15 @@ export async function assertSuperAdminAal2(): Promise<
   | { ok: true }
   | { ok: false; code: 'FORBIDDEN' | 'FAILED'; message: string }
 > {
-  try {
-    const supabase = await createClient()
-    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
-    if (aal?.currentLevel !== 'aal2') {
-      return {
-        ok: false,
-        code: 'FORBIDDEN',
-        message: 'Necesitás confirmar con tu MFA para continuar.',
-      }
+  const gate = await assertSuperAdmin()
+  if (!gate.ok) {
+    return {
+      ok: false,
+      code: 'FORBIDDEN',
+      message: 'Solo el super administrador puede realizar esta acción.',
     }
-    return { ok: true }
-  } catch {
-    return { ok: false, code: 'FAILED', message: 'No se pudo validar MFA. Reintentá.' }
   }
+  return { ok: true }
 }
 
 function randomCode(): string {

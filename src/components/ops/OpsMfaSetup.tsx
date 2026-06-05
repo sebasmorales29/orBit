@@ -13,10 +13,6 @@ interface OpsMfaSetupProps {
   nextHref?: string
 }
 
-async function confirmOpsSession() {
-  await fetch('/api/ops/confirm-session', { method: 'POST' })
-}
-
 export function OpsMfaSetup({ hasVerifiedFactor, sessionAal2, nextHref = '/ops' }: OpsMfaSetupProps) {
   const router = useRouter()
   const toast = useToast()
@@ -65,7 +61,6 @@ export function OpsMfaSetup({ hasVerifiedFactor, sessionAal2, nextHref = '/ops' 
       return
     }
     toast.success('MFA activado')
-    await confirmOpsSession()
     router.refresh()
     router.push(nextHref)
   }
@@ -99,7 +94,6 @@ export function OpsMfaSetup({ hasVerifiedFactor, sessionAal2, nextHref = '/ops' 
       return
     }
     toast.success('Sesión verificada')
-    await confirmOpsSession()
     router.refresh()
     router.push(nextHref)
   }
