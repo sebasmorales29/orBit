@@ -9,6 +9,7 @@ import { LandingHow } from '@/components/landing/LandingHow'
 import { LandingPricing } from '@/components/landing/LandingPricing'
 import { LandingFAQ } from '@/components/landing/LandingFAQ'
 import { LandingContact } from '@/components/landing/LandingContact'
+import { LandingCTA } from '@/components/landing/LandingCTA'
 import { LandingFooter } from '@/components/landing/LandingFooter'
 export default async function HomePage() {
   if (isSupabaseConfigured()) {
@@ -31,6 +32,7 @@ export default async function HomePage() {
         <LandingHow />
         <LandingPricing />
         <LandingFAQ />
+        <LandingCTA />
         <LandingContact />
       </main>
       <LandingFooter />

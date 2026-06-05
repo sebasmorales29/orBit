@@ -154,6 +154,26 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3 md:justify-self-end">
             {adminSlot}
+            <Link
+              href="/login"
+              className={cn(
+                'hidden rounded-full px-3.5 py-2 text-[13px] font-medium text-muted hover:text-foreground sm:inline-flex sm:px-4',
+                transitionColors,
+                interactivePressClass
+              )}
+            >
+              {t('nav.signIn')}
+            </Link>
+            <Link
+              href="/signup"
+              className={cn(
+                'hidden rounded-full border border-border bg-surface-raised px-3.5 py-2 text-[13px] font-medium text-foreground hover:bg-surface-hover sm:inline-flex sm:px-4',
+                transitionColors,
+                interactivePressClass
+              )}
+            >
+              {t('nav.getStarted')}
+            </Link>
             <a
               href="#contacto"
               onClick={() => {
@@ -230,10 +250,24 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
             <div className="flex justify-start">
               <ChromeControls />
             </div>
+            <Link
+              href="/signup"
+              onClick={() => setMobileOpen(false)}
+              className="rounded-full bg-foreground py-3 text-center text-[14px] font-medium text-surface"
+            >
+              {t('nav.getStarted')}
+            </Link>
+            <Link
+              href="/login"
+              onClick={() => setMobileOpen(false)}
+              className="rounded-full border border-border py-3 text-center text-[14px] font-medium text-foreground"
+            >
+              {t('nav.signIn')}
+            </Link>
             <a
               href="#contacto"
               onClick={() => setMobileOpen(false)}
-              className="rounded-full bg-foreground py-3 text-center text-[14px] font-medium text-surface"
+              className="rounded-full border border-border py-3 text-center text-[14px] font-medium text-muted"
             >
               {t('nav.requestDemo')}
             </a>

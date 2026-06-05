@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Link from 'next/link'
 import { Check } from 'lucide-react'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { interactivePressSolidClass } from '@/lib/motion'
@@ -142,8 +143,8 @@ export function LandingPricing() {
                 ))}
               </ul>
 
-              <a
-                href="#contacto"
+              <Link
+                href="/signup"
                 className={cn(
                   'mt-8 flex w-full items-center justify-center rounded-full py-3 text-[14px] font-medium hover:opacity-95',
                   popular
@@ -153,7 +154,7 @@ export function LandingPricing() {
                 )}
               >
                 {t('landing.pricing.ctaPlan')}
-              </a>
+              </Link>
             </article>
           )
         })}

@@ -127,6 +127,12 @@ const es = {
       footnote: 'Sin tarjeta · Desde USD 31/mes en plan Profesional anual',
       footnoteContact: 'Te respondemos para coordinar demo o información · Sin registro público',
     },
+    cta: {
+      title: 'Empezá hoy con tu negocio en orBit',
+      body: 'Creá tu cuenta en minutos, configurá tu tenant y probá 14 días con todo incluido. Si ya tenés cuenta, entrá directo a tu panel.',
+      createAccount: 'Crear cuenta',
+      haveAccount: 'Iniciar sesión',
+    },
     preview: {
       today: 'Hoy',
       actions: '{count} acciones',
@@ -205,7 +211,7 @@ const es = {
       billedHint_annual: 'Un cobro al año · mejor precio por mes',
       popularBadge: 'Más elegido',
       perMonth: 'USD / mes',
-      ctaPlan: 'Solicitar demo',
+      ctaPlan: 'Empezar prueba gratis',
       compareNote:
         '¿No sabés cuál te conviene? En la demo te recomendamos según volumen de ventas, equipo y si necesitás integraciones.',
       trustLine:

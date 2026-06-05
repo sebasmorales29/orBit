@@ -129,6 +129,12 @@ const en = {
       footnote: 'No card required · From USD 40/mo on annual Professional',
       footnoteContact: 'We reply to schedule a demo or share details · No public self-signup',
     },
+    cta: {
+      title: 'Start running your business on orBit today',
+      body: 'Create your account in minutes, set up your tenant, and try 14 days all-inclusive. Already have an account? Go straight to your panel.',
+      createAccount: 'Create account',
+      haveAccount: 'Sign in',
+    },
     preview: {
       today: 'Today',
       actions: '{count} actions',
@@ -207,7 +213,7 @@ const en = {
       billedHint_annual: 'One charge per year · lowest monthly equivalent',
       popularBadge: 'Most popular',
       perMonth: 'USD / month',
-      ctaPlan: 'Request demo',
+      ctaPlan: 'Start free trial',
       compareNote:
         'Not sure which fits? In the demo we recommend based on sales volume, team size, and integrations.',
       trustLine:
