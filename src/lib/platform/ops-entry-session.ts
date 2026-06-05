@@ -1,8 +1,7 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
 import { getSuperAdminEmail } from '@/lib/platform/admin'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createRouteHandlerClient } from '@/lib/supabase/route-handler'
 import { getSupabaseEnv } from '@/lib/supabase/env'
 
 export async function establishSuperAdminSessionOnRedirect(
@@ -32,27 +31,15 @@ export async function establishSuperAdminSessionOnRedirect(
     )
   }
 
-  const env = getSupabaseEnv()
-  if (!env) {
+  if (!getSupabaseEnv()) {
     return NextResponse.json({ error: 'Supabase no configurado.' }, { status: 500 })
   }
 
-  const cookieStore = await cookies()
-  let response = NextResponse.redirect(redirectTo)
-
-  const supabase = createServerClient(env.url, env.anonKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options)
-          response.cookies.set(name, value, options)
-        })
-      },
-    },
-  })
+  const response = NextResponse.redirect(redirectTo)
+  const supabase = createRouteHandlerClient(request, response)
+  if (!supabase) {
+    return NextResponse.json({ error: 'Supabase no configurado.' }, { status: 500 })
+  }
 
   const { error: verifyError } = await supabase.auth.verifyOtp({
     type: 'magiclink',

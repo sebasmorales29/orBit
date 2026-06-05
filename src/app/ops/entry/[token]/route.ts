@@ -1,23 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { OPS_ENTRY_COOKIE, opsEntryCookieOptions } from '@/lib/platform/ops-cookie'
 import { establishSuperAdminSessionOnRedirect } from '@/lib/platform/ops-entry-session'
-import { getOpsMfaStatus } from '@/lib/platform/ops-mfa'
-
-function redirectWithCookies(url: URL, from: NextResponse) {
-  const next = NextResponse.redirect(url)
-  from.cookies.getAll().forEach((cookie) => {
-    next.cookies.set(cookie.name, cookie.value, {
-      path: cookie.path,
-      domain: cookie.domain,
-      expires: cookie.expires,
-      maxAge: cookie.maxAge,
-      httpOnly: cookie.httpOnly,
-      secure: cookie.secure,
-      sameSite: cookie.sameSite as 'lax' | 'strict' | 'none' | undefined,
-    })
-  })
-  return next
-}
 
 export async function GET(
   req: NextRequest,
@@ -40,11 +23,6 @@ export async function GET(
     ...opsEntryCookieOptions(),
     maxAge: 60 * 60 * 12, // 12h
   })
-
-  const status = await getOpsMfaStatus()
-  if (status && (!status.mfaRequired || status.satisfied)) {
-    return redirectWithCookies(new URL('/ops', req.url), res)
-  }
 
   return res
 }
