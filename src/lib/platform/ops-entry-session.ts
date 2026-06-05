@@ -35,20 +35,34 @@ export async function establishSuperAdminSessionOnRedirect(
     return NextResponse.json({ error: 'Supabase no configurado.' }, { status: 500 })
   }
 
-  const response = NextResponse.redirect(redirectTo)
-  const supabase = createRouteHandlerClient(request, response)
-  if (!supabase) {
+  const client = createRouteHandlerClient(request, redirectTo)
+  if (!client) {
     return NextResponse.json({ error: 'Supabase no configurado.' }, { status: 500 })
   }
 
-  const { error: verifyError } = await supabase.auth.verifyOtp({
+  const magic = await client.supabase.auth.verifyOtp({
     type: 'magiclink',
     token_hash: tokenHash,
   })
 
-  if (verifyError) {
-    return NextResponse.json({ error: verifyError.message }, { status: 500 })
+  if (!magic.error) {
+    return client.getResponse()
   }
 
-  return response
+  const retry = createRouteHandlerClient(request, redirectTo)
+  if (!retry) {
+    return NextResponse.json({ error: magic.error.message }, { status: 500 })
+  }
+
+  const emailOtp = await retry.supabase.auth.verifyOtp({
+    type: 'email',
+    email,
+    token_hash: tokenHash,
+  })
+
+  if (emailOtp.error) {
+    return NextResponse.json({ error: emailOtp.error.message }, { status: 500 })
+  }
+
+  return retry.getResponse()
 }

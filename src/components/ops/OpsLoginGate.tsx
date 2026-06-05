@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { BrandLogo } from '@/components/brand/BrandLogo'
+import { OpsDirectLoginForm } from '@/components/ops/OpsDirectLoginForm'
 import { OpsMfaSetup } from '@/components/ops/OpsMfaSetup'
+import { createClient } from '@/lib/supabase/client'
 import type { OpsMfaStatus } from '@/lib/platform/ops-mfa'
 
 type SessionPayload = {
@@ -22,17 +23,36 @@ interface OpsLoginGateProps {
   nextHref: string
 }
 
+async function fetchSessionStatus(): Promise<SessionPayload> {
+  const res = await fetch('/api/ops/session-status', {
+    cache: 'no-store',
+    credentials: 'include',
+  })
+  return (await res.json()) as SessionPayload
+}
+
 export function OpsLoginGate({ nextHref }: OpsLoginGateProps) {
   const router = useRouter()
   const [status, setStatus] = useState<SessionStatus>({ loading: true })
+
+  const reload = useCallback(async () => {
+    setStatus({ loading: true })
+    try {
+      const data = await fetchSessionStatus()
+      setStatus({ loading: false, ...data })
+    } catch {
+      setStatus({ loading: false, configured: false, authenticated: false, admin: false })
+    }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
 
     async function load() {
       try {
-        const res = await fetch('/api/ops/session-status', { cache: 'no-store' })
-        const data = (await res.json()) as SessionPayload
+        const supabase = createClient()
+        await supabase.auth.getSession()
+        const data = await fetchSessionStatus()
         if (!cancelled) {
           setStatus({ loading: false, ...data })
         }
@@ -80,22 +100,15 @@ export function OpsLoginGate({ nextHref }: OpsLoginGateProps) {
   }
 
   if (!status.authenticated) {
-    const loginNext = `/ops/login?next=${encodeURIComponent(nextHref)}`
     return (
-      <GateCard title="Enlace requerido">
+      <GateCard title="Acceso a Operaciones">
         <p className="mt-2 text-[13px] leading-relaxed text-muted">
-          No hay sesión activa. Usá una de estas opciones para entrar a Operaciones.
+          Iniciá sesión con tu cuenta de super administrador o usá el enlace privado de entrada.
         </p>
-        <p className="mt-4 text-[13px] font-medium text-foreground">Opción 1 — enlace privado:</p>
+        <OpsDirectLoginForm onSuccess={() => void reload()} />
+        <p className="mt-4 text-[13px] font-medium text-foreground">Enlace privado:</p>
         <p className="mt-2 rounded-xl border border-border bg-surface-raised px-3 py-2 font-mono text-[12px] text-foreground">
           /ops/entry/TU_TOKEN
-        </p>
-        <p className="mt-4 text-[13px] font-medium text-foreground">Opción 2 — iniciar sesión:</p>
-        <p className="mt-2 text-[13px] text-muted">
-          <Link href={`/login?next=${encodeURIComponent(loginNext)}`} className="text-accent hover:underline">
-            Iniciá sesión en orBit
-          </Link>{' '}
-          con el correo de super administrador y volvé acá.
         </p>
       </GateCard>
     )
@@ -115,8 +128,9 @@ export function OpsLoginGate({ nextHref }: OpsLoginGateProps) {
     return (
       <GateCard title="Error de acceso">
         <p className="mt-2 text-[13px] text-muted">
-          No se pudo validar MFA. Cerrá sesión, volvé a abrir tu enlace de entrada o iniciá sesión de nuevo.
+          No se pudo validar MFA. Cerrá sesión, volvé a iniciar sesión o abrí tu enlace de entrada.
         </p>
+        <OpsDirectLoginForm onSuccess={() => void reload()} />
       </GateCard>
     )
   }
@@ -149,7 +163,7 @@ export function OpsLoginGate({ nextHref }: OpsLoginGateProps) {
 
           <h1 className="mt-4 text-2xl font-semibold text-foreground">Código de autenticador</h1>
           <p className="mt-2 text-[13px] text-muted">
-            Ingresá el código de 6 dígitos de tu app de autenticación para entrar a Operaciones.
+            Ingresá el código de 6 dígitos de tu app de autenticación. Si falla, esperá el próximo código (30 s).
           </p>
 
           <div className="mt-6">

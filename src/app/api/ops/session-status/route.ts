@@ -2,23 +2,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { getSuperAdminEmail } from '@/lib/platform/admin'
 import { getOpsMfaStatusForEmail } from '@/lib/platform/ops-mfa'
 import { resolveOpsAccess } from '@/lib/platform/ops-access'
-import { createRouteHandlerClient } from '@/lib/supabase/route-handler'
+import { copyResponseCookies, createRouteHandlerClient } from '@/lib/supabase/route-handler'
 import { isServiceRoleConfigured, isSupabaseConfigured } from '@/lib/supabase/env'
-
-function withRefreshedCookies(from: NextResponse, to: NextResponse) {
-  from.cookies.getAll().forEach((cookie) => {
-    to.cookies.set(cookie.name, cookie.value, {
-      path: cookie.path,
-      domain: cookie.domain,
-      expires: cookie.expires,
-      maxAge: cookie.maxAge,
-      httpOnly: cookie.httpOnly,
-      secure: cookie.secure,
-      sameSite: cookie.sameSite as 'lax' | 'strict' | 'none' | undefined,
-    })
-  })
-  return to
-}
 
 export async function GET(request: NextRequest) {
   const superEmail = getSuperAdminEmail()
@@ -33,19 +18,19 @@ export async function GET(request: NextRequest) {
     })
   }
 
-  const cookieCarrier = NextResponse.next()
-  const supabase = createRouteHandlerClient(request, cookieCarrier)
-  if (!supabase) {
+  const client = createRouteHandlerClient(request)
+  if (!client) {
     return NextResponse.json({ configured: false, authenticated: false, admin: false })
   }
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+    error: userError,
+  } = await client.supabase.auth.getUser()
 
-  if (!user?.email) {
-    return withRefreshedCookies(
-      cookieCarrier,
+  if (userError || !user?.email) {
+    return copyResponseCookies(
+      client.getResponse(),
       NextResponse.json({
         configured: true,
         authenticated: false,
@@ -57,8 +42,8 @@ export async function GET(request: NextRequest) {
   const email = user.email.trim().toLowerCase()
   const access = await resolveOpsAccess(email)
   if (!access.allowed) {
-    return withRefreshedCookies(
-      cookieCarrier,
+    return copyResponseCookies(
+      client.getResponse(),
       NextResponse.json({
         configured: true,
         authenticated: true,
@@ -68,9 +53,9 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  const mfa = await getOpsMfaStatusForEmail(supabase, email)
-  return withRefreshedCookies(
-    cookieCarrier,
+  const mfa = await getOpsMfaStatusForEmail(client.supabase, email)
+  return copyResponseCookies(
+    client.getResponse(),
     NextResponse.json({
       configured: true,
       authenticated: true,
