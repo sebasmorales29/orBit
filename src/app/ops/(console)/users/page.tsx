@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { AccountStatusDot } from '@/components/ui/AccountStatusDot'
-import { opsListUsers } from '@/lib/platform/actions'
+import { listPlatformUsers } from '@/lib/platform/users-admin'
 
 export default async function OpsUsersPage() {
-  const result = await opsListUsers()
+  const result = await listPlatformUsers()
 
   if (!result.ok) {
     return <p className="text-[14px] text-red-600">{result.message}</p>

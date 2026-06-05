@@ -153,8 +153,12 @@ export async function updateSession(request: NextRequest) {
     const hasCookie = request.cookies.get(OPS_ENTRY_COOKIE)?.value === '1'
     if (!hasCookie) {
       const url = request.nextUrl.clone()
-      url.pathname = '/_not-found'
-      return NextResponse.rewrite(url)
+      url.pathname = '/ops/login'
+      url.searchParams.set('reason', 'entry')
+      if (!url.searchParams.has('next')) {
+        url.searchParams.set('next', pathname)
+      }
+      return NextResponse.redirect(url)
     }
   }
 

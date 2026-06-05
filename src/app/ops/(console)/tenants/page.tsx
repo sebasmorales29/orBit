@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { OpsConfigNotice } from '@/components/ops/OpsConfigNotice'
 import { OpsSchemaNotice } from '@/components/ops/OpsSchemaNotice'
 import { OpsTenantsTable } from '@/components/ops/OpsTenantsTable'
-import { opsCheckSchema } from '@/lib/platform/actions'
+import { checkPlatformSchema } from '@/lib/platform/schema-health'
 import { listProvisionedTenants } from '@/lib/platform/provision-tenant'
 import {
   filterTenantRows,
@@ -20,7 +20,7 @@ export default async function OpsTenantsPage({
   const filter = parseTenantListFilter(params)
   const filterLabel = tenantFilterLabel(filter)
 
-  const schema = await opsCheckSchema()
+  const schema = await checkPlatformSchema()
   if (!schema.ok) {
     return <OpsSchemaNotice missingColumns={schema.missingColumns} sqlFix={schema.sqlFix} />
   }

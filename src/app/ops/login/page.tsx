@@ -5,7 +5,13 @@ import { OpsMfaSetup } from '@/components/ops/OpsMfaSetup'
 import { OPS_ENTRY_COOKIE } from '@/lib/platform/ops-cookie'
 import { getOpsMfaStatus } from '@/lib/platform/ops-mfa'
 
-export default async function OpsLoginPage() {
+export default async function OpsLoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const params = await searchParams
+  const entryExpired = params.reason === 'entry'
   const cookieStore = await cookies()
   const hasEntry = cookieStore.get(OPS_ENTRY_COOKIE)?.value === '1'
 
@@ -21,10 +27,16 @@ export default async function OpsLoginPage() {
                 <p className="text-[14px] font-semibold text-foreground">Acceso privado</p>
               </div>
             </div>
-            <h1 className="mt-6 text-2xl font-semibold text-foreground">Enlace requerido</h1>
+            <h1 className="mt-6 text-2xl font-semibold text-foreground">
+              {entryExpired ? 'Acceso expirado' : 'Enlace requerido'}
+            </h1>
             <p className="mt-2 text-[13px] leading-relaxed text-muted">
-              Esta consola no tiene inicio de sesión público. Usá el enlace de acceso que te compartió el
-              administrador de orBit (<code className="text-[12px] text-foreground">/ops/entry/…</code>).
+              {entryExpired
+                ? 'Tu acceso a Ops expiró o la cookie de entrada no está activa. Volvé a abrir tu enlace privado de entrada.'
+                : 'Esta consola no tiene inicio de sesión público. Usá el enlace de acceso privado de orBit.'}
+            </p>
+            <p className="mt-3 rounded-xl border border-border bg-surface-raised px-3 py-2 font-mono text-[12px] text-foreground">
+              /ops/entry/TU_TOKEN
             </p>
           </div>
         </div>

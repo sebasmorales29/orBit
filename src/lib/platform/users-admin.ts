@@ -40,10 +40,20 @@ export type PlatformUserDetailResult =
   | { ok: true; user: PlatformUserDetail }
   | { ok: false; code: 'NOT_AUTHORIZED' | 'ADMIN_NOT_CONFIGURED' | 'NOT_FOUND' | 'FAILED'; message: string }
 
+function gateMessage(gate: { ok: false; reason: 'unauthenticated' | 'forbidden' | 'not_configured' }): string {
+  if (gate.reason === 'unauthenticated') {
+    return 'Sesión expirada. Volvé a abrir tu enlace de entrada (/ops/entry/…).'
+  }
+  if (gate.reason === 'not_configured') {
+    return 'Ops no está configurado en el servidor (super admin o service role).'
+  }
+  return 'Sin permiso para esta sección de Ops.'
+}
+
 export async function listPlatformUsers(limit = 80): Promise<PlatformUsersResult> {
   const gate = await assertPlatformAdmin()
   if (!gate.ok) {
-    return { ok: false, code: 'NOT_AUTHORIZED', message: 'Sin permiso.' }
+    return { ok: false, code: 'NOT_AUTHORIZED', message: gateMessage(gate) }
   }
 
   const admin = createAdminClient()
@@ -56,7 +66,7 @@ export async function listPlatformUsers(limit = 80): Promise<PlatformUsersResult
     perPage: limit,
   })
   if (authError) {
-    return { ok: false, code: 'NOT_AUTHORIZED', message: authError.message }
+    return { ok: false, code: 'ADMIN_NOT_CONFIGURED', message: authError.message }
   }
 
   const userIds = authData.users.map((u) => u.id)

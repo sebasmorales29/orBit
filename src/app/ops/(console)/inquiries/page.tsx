@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { opsListContactRequests } from '@/lib/platform/actions'
+import { listPlatformContactRequests } from '@/lib/platform/contact-requests'
 import { OpsContactRequests } from '@/components/ops/OpsContactRequests'
 
 export default async function OpsInquiriesPage({
@@ -9,7 +9,7 @@ export default async function OpsInquiriesPage({
 }) {
   const params = await searchParams
   const showArchived = params.archived === '1'
-  const result = await opsListContactRequests(showArchived)
+  const result = await listPlatformContactRequests({ includeArchived: showArchived })
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">

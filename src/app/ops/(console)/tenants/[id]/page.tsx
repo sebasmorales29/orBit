@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { OpsSchemaNotice } from '@/components/ops/OpsSchemaNotice'
 import { OpsTenantDetail } from '@/components/ops/OpsTenantDetail'
-import { opsGetTenant } from '@/lib/platform/actions'
+import { getTenantDetail } from '@/lib/platform/tenant-admin'
 import { assertPlatformAdmin } from '@/lib/platform/admin'
 
 export default async function OpsTenantDetailPage({
@@ -10,7 +10,7 @@ export default async function OpsTenantDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const result = await opsGetTenant(id)
+  const result = await getTenantDetail(id)
 
   if (!result.ok) {
     if (result.code === 'SCHEMA' && result.sqlFix) {
