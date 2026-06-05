@@ -100,7 +100,7 @@ export async function updateSession(request: NextRequest) {
   const isResetPassword = pathname.startsWith('/reset-password')
 
   const isOpsRoute = pathname.startsWith('/ops')
-  const isOpsEntry = pathname.startsWith('/ops/entry/')
+  const isOpsEntry = pathname === '/ops/entry' || pathname.startsWith('/ops/entry/')
   const isOpsLogin = pathname === '/ops/login'
   const isOpsMfa = pathname === '/ops/mfa'
   const isOpsLogout = pathname === '/ops/logout'

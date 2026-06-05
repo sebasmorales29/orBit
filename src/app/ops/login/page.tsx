@@ -72,7 +72,11 @@ export default async function OpsLoginPage({
             </div>
           </div>
 
-          <h1 className="mt-6 text-2xl font-semibold text-foreground">Código de autenticador</h1>
+          <p className="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[12px] text-muted">
+            Enlace de entrada aceptado. Este es el último paso antes de Operaciones.
+          </p>
+
+          <h1 className="mt-4 text-2xl font-semibold text-foreground">Código de autenticador</h1>
           <p className="mt-2 text-[13px] text-muted">
             Ingresá el código de 6 dígitos de tu app de autenticación para entrar a Operaciones.
           </p>
