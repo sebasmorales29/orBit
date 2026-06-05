@@ -71,6 +71,7 @@ export function PhoneInput({
   }, [])
 
   const selected = countries.find((c) => c.iso === country) ?? countries[0]
+  const dialDigits = selected.dial.replace(/\D/g, '')
 
   function emit(countryCode: CountryCode, nationalDigits: string) {
     onChange(nationalDigits ? toE164(countryCode, nationalDigits) : '')
@@ -85,7 +86,18 @@ export function PhoneInput({
   }
 
   function handleInputChange(raw: string) {
-    const digits = digitsFromFormatted(raw)
+    let digits = digitsFromFormatted(raw)
+
+    // Si el usuario pega/escribe el prefijo del país (ej. 5068888...), lo removemos
+    // para que el input siempre sea solo número nacional. El código vive en el dropdown.
+    if (dialDigits) {
+      if (digits === dialDigits) {
+        digits = ''
+      } else if (digits.startsWith(dialDigits) && digits.length > dialDigits.length) {
+        digits = digits.slice(dialDigits.length)
+      }
+    }
+
     const formatted = formatNationalNumber(digits, country)
     setDisplay(formatted)
     emit(country, digits)

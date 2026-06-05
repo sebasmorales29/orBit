@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { assertPlatformAdmin } from '@/lib/platform/admin'
+import { sendEmailResend } from '@/lib/email/resend'
 
 export type ContactRequestStatus = 'new' | 'contacted' | 'demo_scheduled' | 'converted' | 'closed'
 
@@ -18,6 +19,10 @@ export interface ContactRequestRow {
   status: ContactRequestStatus
   source: string
   created_at: string
+  updated_at?: string
+  archived_at?: string | null
+  ops_notes?: string | null
+  last_contacted_at?: string | null
 }
 
 export interface SubmitContactInput {
@@ -90,10 +95,37 @@ export async function submitPlatformContactRequest(
   return { ok: true, id: data.id }
 }
 
-export async function listPlatformContactRequests(): Promise<
-  | { ok: true; requests: ContactRequestRow[] }
-  | { ok: false; message: string }
-> {
+export async function listPlatformContactRequests(options?: {
+  includeArchived?: boolean
+}): Promise<{ ok: true; requests: ContactRequestRow[] } | { ok: false; message: string }> {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) return { ok: false, message: 'Sin permiso.' }
+
+  const admin = createAdminClient()
+  if (!admin) return { ok: false, message: 'Falta SUPABASE_SERVICE_ROLE_KEY.' }
+
+  let query = admin
+    .from('platform_contact_requests')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(200)
+
+  if (!options?.includeArchived) {
+    query = query.is('archived_at', null)
+  }
+
+  const { data, error } = await query
+
+  if (error) {
+    return { ok: false, message: error.message }
+  }
+
+  return { ok: true, requests: (data ?? []) as ContactRequestRow[] }
+}
+
+export async function getPlatformContactRequest(
+  id: string
+): Promise<{ ok: true; request: ContactRequestRow } | { ok: false; message: string }> {
   const gate = await assertPlatformAdmin()
   if (!gate.ok) return { ok: false, message: 'Sin permiso.' }
 
@@ -103,14 +135,13 @@ export async function listPlatformContactRequests(): Promise<
   const { data, error } = await admin
     .from('platform_contact_requests')
     .select('*')
-    .order('created_at', { ascending: false })
-    .limit(200)
+    .eq('id', id)
+    .maybeSingle()
 
-  if (error) {
-    return { ok: false, message: error.message }
-  }
+  if (error) return { ok: false, message: error.message }
+  if (!data) return { ok: false, message: 'Solicitud no encontrada.' }
 
-  return { ok: true, requests: (data ?? []) as ContactRequestRow[] }
+  return { ok: true, request: data as ContactRequestRow }
 }
 
 export async function updateContactRequestStatus(
@@ -127,6 +158,104 @@ export async function updateContactRequestStatus(
     .from('platform_contact_requests')
     .update({ status, updated_at: new Date().toISOString() })
     .eq('id', id)
+
+  if (error) return { ok: false, message: error.message }
+  return { ok: true }
+}
+
+export async function updateContactRequestNotes(
+  id: string,
+  opsNotes: string
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) return { ok: false, message: 'Sin permiso.' }
+
+  const admin = createAdminClient()
+  if (!admin) return { ok: false, message: 'Falta SUPABASE_SERVICE_ROLE_KEY.' }
+
+  const { error } = await admin
+    .from('platform_contact_requests')
+    .update({ ops_notes: opsNotes.trim() || null, updated_at: new Date().toISOString() })
+    .eq('id', id)
+
+  if (error) return { ok: false, message: error.message }
+  return { ok: true }
+}
+
+export async function archiveContactRequest(
+  id: string
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) return { ok: false, message: 'Sin permiso.' }
+
+  const admin = createAdminClient()
+  if (!admin) return { ok: false, message: 'Falta SUPABASE_SERVICE_ROLE_KEY.' }
+
+  const now = new Date().toISOString()
+  const { error } = await admin
+    .from('platform_contact_requests')
+    .update({ archived_at: now, updated_at: now })
+    .eq('id', id)
+
+  if (error) return { ok: false, message: error.message }
+  return { ok: true }
+}
+
+export async function deleteContactRequest(
+  id: string
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) return { ok: false, message: 'Sin permiso.' }
+
+  const admin = createAdminClient()
+  if (!admin) return { ok: false, message: 'Falta SUPABASE_SERVICE_ROLE_KEY.' }
+
+  const { error } = await admin.from('platform_contact_requests').delete().eq('id', id)
+
+  if (error) return { ok: false, message: error.message }
+  return { ok: true }
+}
+
+export async function sendContactRequestEmail(input: {
+  id: string
+  subject: string
+  body: string
+}): Promise<{ ok: true } | { ok: false; message: string }> {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) return { ok: false, message: 'Sin permiso.' }
+
+  const detail = await getPlatformContactRequest(input.id)
+  if (!detail.ok) return detail
+
+  const subject = input.subject.trim()
+  const body = input.body.trim()
+  if (!subject || body.length < 5) {
+    return { ok: false, message: 'Asunto y mensaje son obligatorios.' }
+  }
+
+  const sent = await sendEmailResend({
+    to: detail.request.email,
+    subject,
+    text: body,
+  })
+
+  if (!sent.ok) return sent
+
+  const admin = createAdminClient()
+  if (!admin) return { ok: false, message: 'Falta SUPABASE_SERVICE_ROLE_KEY.' }
+
+  const now = new Date().toISOString()
+  const nextStatus: ContactRequestStatus =
+    detail.request.status === 'new' ? 'contacted' : detail.request.status
+
+  const { error } = await admin
+    .from('platform_contact_requests')
+    .update({
+      status: nextStatus,
+      last_contacted_at: now,
+      updated_at: now,
+    })
+    .eq('id', input.id)
 
   if (error) return { ok: false, message: error.message }
   return { ok: true }

@@ -41,7 +41,12 @@ import {
 import type { ProvisionTenantInput, ProvisionTenantResult, TenantListResult } from '@/lib/platform/types'
 import { inviteUserToTenant, listTenantInvites } from '@/lib/platform/invites'
 import {
+  archiveContactRequest,
+  deleteContactRequest,
+  getPlatformContactRequest,
   listPlatformContactRequests,
+  sendContactRequestEmail,
+  updateContactRequestNotes,
   updateContactRequestStatus,
   type ContactRequestStatus,
 } from '@/lib/platform/contact-requests'
@@ -442,14 +447,57 @@ export async function opsSuspendTenantSecure(input: { orgId: string; suspended: 
   return result
 }
 
-export async function opsListContactRequests() {
-  return listPlatformContactRequests()
+export async function opsListContactRequests(includeArchived?: boolean) {
+  return listPlatformContactRequests({ includeArchived })
+}
+
+export async function opsGetContactRequest(id: string) {
+  return getPlatformContactRequest(id)
 }
 
 export async function opsUpdateContactRequestStatus(id: string, status: ContactRequestStatus) {
   const result = await updateContactRequestStatus(id, status)
   if (result.ok) {
     revalidatePath('/ops/inquiries')
+    revalidatePath(`/ops/inquiries/${id}`)
+  }
+  return result
+}
+
+export async function opsUpdateContactRequestNotes(id: string, opsNotes: string) {
+  const result = await updateContactRequestNotes(id, opsNotes)
+  if (result.ok) {
+    revalidatePath(`/ops/inquiries/${id}`)
+  }
+  return result
+}
+
+export async function opsArchiveContactRequest(id: string) {
+  const result = await archiveContactRequest(id)
+  if (result.ok) {
+    revalidatePath('/ops/inquiries')
+    revalidatePath(`/ops/inquiries/${id}`)
+  }
+  return result
+}
+
+export async function opsDeleteContactRequest(id: string) {
+  const result = await deleteContactRequest(id)
+  if (result.ok) {
+    revalidatePath('/ops/inquiries')
+  }
+  return result
+}
+
+export async function opsSendContactRequestEmail(input: {
+  id: string
+  subject: string
+  body: string
+}) {
+  const result = await sendContactRequestEmail(input)
+  if (result.ok) {
+    revalidatePath('/ops/inquiries')
+    revalidatePath(`/ops/inquiries/${input.id}`)
   }
   return result
 }
