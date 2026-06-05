@@ -1,9 +1,5 @@
-import { notFound, redirect } from 'next/navigation'
 import { OpsConfigNotice } from '@/components/ops/OpsConfigNotice'
-import {
-  assertPlatformAdmin,
-  getSuperAdminEmail,
-} from '@/lib/platform/admin'
+import { getSuperAdminEmail } from '@/lib/platform/admin'
 import { appShellClass } from '@/components/layout/app-layout'
 import { isServiceRoleConfigured, isSupabaseConfigured } from '@/lib/supabase/env'
 
@@ -28,12 +24,7 @@ export default async function OpsLayout({ children }: { children: React.ReactNod
     )
   }
 
-  const gate = await assertPlatformAdmin()
-  if (!gate.ok) {
-    if (gate.reason === 'unauthenticated') redirect('/ops/login')
-    notFound()
-  }
-
+  // Login, MFA y entry no pasan por el gate de (console)/layout — evita loop en /ops/login.
   return (
     <div className="min-h-dvh bg-page">
       <main className={`${appShellClass} py-8`}>

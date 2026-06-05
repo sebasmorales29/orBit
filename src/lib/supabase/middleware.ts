@@ -102,6 +102,7 @@ export async function updateSession(request: NextRequest) {
   const isOpsRoute = pathname.startsWith('/ops')
   const isOpsEntry = pathname.startsWith('/ops/entry/')
   const isOpsLogin = pathname === '/ops/login'
+  const isOpsMfa = pathname === '/ops/mfa'
   const isOpsLogout = pathname === '/ops/logout'
 
   if (isOpsRoute) {
@@ -148,7 +149,7 @@ export async function updateSession(request: NextRequest) {
 
   // /ops solo se puede acceder si antes entraste por /ops/entry/<token>
   // (y además cumplís el gate dentro de /ops/layout.tsx).
-  if (user && isOpsRoute && !isOpsEntry && !isOpsLogout) {
+  if (user && isOpsRoute && !isOpsEntry && !isOpsLogout && !isOpsLogin && !isOpsMfa) {
     const hasCookie = request.cookies.get(OPS_ENTRY_COOKIE)?.value === '1'
     if (!hasCookie) {
       const url = request.nextUrl.clone()
