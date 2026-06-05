@@ -8,7 +8,7 @@ export async function GET(
 ) {
   const gate = await assertSuperAdmin()
   if (!gate.ok) {
-    return NextResponse.redirect(new URL('/login', req.url))
+    return NextResponse.redirect(new URL('/ops/login', req.url))
   }
 
   const { token } = await params

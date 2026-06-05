@@ -101,6 +101,7 @@ export async function updateSession(request: NextRequest) {
 
   const isOpsRoute = pathname.startsWith('/ops')
   const isOpsEntry = pathname.startsWith('/ops/entry/')
+  const isOpsLogin = pathname === '/ops/login'
   const isOpsLogout = pathname === '/ops/logout'
 
   if (isOpsRoute) {
@@ -121,7 +122,11 @@ export async function updateSession(request: NextRequest) {
 
   const isChangePassword = pathname.startsWith('/change-password')
 
-  if (!user && !isPublicMarketing && (isAppRoute || (isOpsRoute && !isOpsLogout))) {
+  if (
+    !user &&
+    !isPublicMarketing &&
+    (isAppRoute || (isOpsRoute && !isOpsLogout && !isOpsLogin && !isOpsEntry))
+  ) {
     const url = request.nextUrl.clone()
     url.pathname = isOpsRoute ? '/ops/login' : '/login'
     if (isOpsRoute && url.searchParams.has('next') === false) {
