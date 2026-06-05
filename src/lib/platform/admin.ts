@@ -1,7 +1,7 @@
 import { cache } from 'react'
-import { createClient, getAuthUser } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { resolveOpsAccess } from '@/lib/platform/ops-access'
+import { getSessionActor } from '@/lib/platform/session-actor'
 
 /** Super administrador único (dueño de orBit). Solo este correo gestiona accesos /ops. */
 export function getSuperAdminEmail(): string | null {
@@ -30,13 +30,13 @@ export function isSuperAdminEmail(email: string | null | undefined): boolean {
 }
 
 export async function getSessionUserEmail(): Promise<string | null> {
-  const user = await getAuthUser()
-  return user?.email ?? null
+  const actor = await getSessionActor()
+  return actor?.email ?? null
 }
 
 export async function getSessionUserId(): Promise<string | null> {
-  const user = await getAuthUser()
-  return user?.id ?? null
+  const actor = await getSessionActor()
+  return actor?.userId ?? null
 }
 
 export async function isPlatformAdminEmail(
@@ -55,11 +55,11 @@ async function assertSuperAdminUncached(): Promise<
     return { ok: false, reason: 'not_configured' }
   }
 
-  const user = await getAuthUser()
-  if (!user?.email || !user.id) return { ok: false, reason: 'unauthenticated' }
-  if (!isSuperAdminEmail(user.email)) return { ok: false, reason: 'forbidden' }
+  const actor = await getSessionActor()
+  if (!actor) return { ok: false, reason: 'unauthenticated' }
+  if (!isSuperAdminEmail(actor.email)) return { ok: false, reason: 'forbidden' }
 
-  return { ok: true, email: user.email.trim().toLowerCase(), userId: user.id }
+  return { ok: true, email: actor.email, userId: actor.userId }
 }
 
 export const assertSuperAdmin = cache(assertSuperAdminUncached)
@@ -73,15 +73,13 @@ async function assertPlatformAdminUncached(): Promise<
     return { ok: false, reason: 'not_configured' }
   }
 
-  const user = await getAuthUser()
-  if (!user?.email || !user.id) return { ok: false, reason: 'unauthenticated' }
+  const actor = await getSessionActor()
+  if (!actor) return { ok: false, reason: 'unauthenticated' }
 
-  const email = user.email.trim().toLowerCase()
-  const access = await resolveOpsAccess(email)
-
+  const access = await resolveOpsAccess(actor.email)
   if (!access.allowed) return { ok: false, reason: 'forbidden' }
 
-  return { ok: true, email, userId: user.id, isSuper: access.isSuper }
+  return { ok: true, email: actor.email, userId: actor.userId, isSuper: access.isSuper }
 }
 
 export const assertPlatformAdmin = cache(assertPlatformAdminUncached)

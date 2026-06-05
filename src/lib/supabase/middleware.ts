@@ -57,6 +57,29 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
+  if (user?.email && user.id) {
+    requestHeaders.set('x-ops-user-email', user.email.trim().toLowerCase())
+    requestHeaders.set('x-ops-user-id', user.id)
+  } else {
+    requestHeaders.delete('x-ops-user-email')
+    requestHeaders.delete('x-ops-user-id')
+  }
+
+  const refreshedCookies = supabaseResponse.cookies.getAll()
+  supabaseResponse = next()
+  refreshedCookies.forEach((cookie) => {
+    supabaseResponse.cookies.set(cookie.name, cookie.value, {
+      path: cookie.path,
+      domain: cookie.domain,
+      expires: cookie.expires,
+      maxAge: cookie.maxAge,
+      httpOnly: cookie.httpOnly,
+      secure: cookie.secure,
+      sameSite: cookie.sameSite as 'lax' | 'strict' | 'none' | undefined,
+    })
+  })
+
   const requestHost = request.headers.get('host')
   const proto = request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol.replace(':', '')
 

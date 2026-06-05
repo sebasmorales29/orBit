@@ -1,6 +1,8 @@
 import { headers } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import { assertPlatformAdmin, isOpsAccessTableReady } from '@/lib/platform/admin'
+
+export const dynamic = 'force-dynamic'
 import { BrandLogo } from '@/components/brand/BrandLogo'
 import { OpsNav } from '@/components/ops/OpsNav'
 import { appShellClass } from '@/components/layout/app-layout'

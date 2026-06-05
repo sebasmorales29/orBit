@@ -93,16 +93,16 @@ export async function getOpsSessionAccess(): Promise<OpsSessionAccess | null> {
   const supabaseEmail = await getSessionUserEmail()
   if (!supabaseEmail) return null
 
-  const { getAuthUser } = await import('@/lib/supabase/server')
-  const user = await getAuthUser()
-  if (!user?.id) return null
+  const { getSessionActor } = await import('@/lib/platform/session-actor')
+  const actor = await getSessionActor()
+  if (!actor) return null
 
-  const access = await resolveOpsAccess(supabaseEmail)
+  const access = await resolveOpsAccess(actor.email)
   if (!access.allowed) return null
 
   return {
-    email: supabaseEmail.trim().toLowerCase(),
-    userId: user.id,
+    email: actor.email,
+    userId: actor.userId,
     isSuper: access.isSuper,
     mfaRequired: access.mfaRequired,
   }
