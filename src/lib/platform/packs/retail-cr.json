@@ -1,0 +1,16 @@
+{
+  "id": "retail-cr",
+  "label": "Tienda / retail (CR)",
+  "description": "Productos varios, inventario activo, ventas por WhatsApp e Instagram.",
+  "defaults": {
+    "businessTypeKey": "retail",
+    "businessTypeLabel": "Tienda / productos varios",
+    "currency": "CRC",
+    "usesStock": true,
+    "teamSize": "small",
+    "salesChannels": ["whatsapp", "instagram"],
+    "mainChallenge": "follow_ups",
+    "successFocus": "sales",
+    "orderVolume": "steady"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "food-stock-cr",
+  "label": "Alimentos y bebidas (CR)",
+  "description": "Pedidos del día, inventario de insumos, entregas y cobros.",
+  "defaults": {
+    "businessTypeKey": "food",
+    "businessTypeLabel": "Alimentos y bebidas",
+    "currency": "CRC",
+    "usesStock": true,
+    "teamSize": "small",
+    "salesChannels": ["whatsapp", "instagram", "physical"],
+    "mainChallenge": "orders",
+    "successFocus": "organized",
+    "orderVolume": "busy"
+  }
+}

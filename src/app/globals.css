@@ -1,26 +1,175 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Light — fondo claro suave, superficies blancas, texto con contraste ───── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --page-bg: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #fcfcfd 40%,
+    #f6f7f9 100%
+  );
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-card: #f8f9fb;
+  --surface-hover: #f1f3f6;
+  --border: #e3e6eb;
+  --border-subtle: #eef0f3;
+  --foreground: #16181c;
+  --muted: #525a63;
+  --muted-foreground: #7a828c;
+  --accent: #d65a31;
+  --accent-soft: rgb(214 90 49 / 0.1);
+  --on-accent: #ffffff;
+  --nav-pill: #f1f3f6;
+  --nav-text: #16181c;
+  --hero-glow: rgb(214 90 49 / 0.05);
+  --selection: rgb(214 90 49 / 0.18);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 220ms;
+  --duration-slow: 320ms;
+}
+
+/* ─── Dark — negro profundo, sin gradientes ni grises claros ──────────────── */
+.dark {
+  --page-bg: #000000;
+  --surface: #000000;
+  --surface-raised: #0a0a0a;
+  --surface-card: #0c0c0c;
+  --surface-hover: #121212;
+  --border: #1a1a1a;
+  --border-subtle: #111111;
+  --foreground: #f5f5f5;
+  --muted: #a3a3a3;
+  --muted-foreground: #737373;
+  --accent: #d65a31;
+  --accent-soft: rgb(214 90 49 / 0.18);
+  --on-accent: #eeeeee;
+  --nav-pill: #141414;
+  --nav-text: #eeeeee;
+  --hero-glow: rgb(238 238 238 / 0.06);
+  --selection: rgb(214 90 49 / 0.35);
 }
 
 @theme inline {
-  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-card: var(--surface-card);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-nav-pill: var(--nav-pill);
+  --color-nav-text: var(--nav-text);
+  --color-on-accent: var(--on-accent);
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--page-bg);
+    background-attachment: fixed;
+    color: var(--color-foreground);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    transition:
+      color var(--duration-slow) var(--ease-smooth),
+      background-color var(--duration-slow) var(--ease-smooth);
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--color-foreground);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .bg-page {
+    background: var(--page-bg);
+    background-attachment: fixed;
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .pill-ghost {
+    border: 1px solid color-mix(in srgb, var(--color-accent) 50%, transparent);
+    color: var(--color-accent);
+    background: transparent;
+  }
+
+  .pill-ghost:hover {
+    background: var(--color-accent-soft);
+  }
+
+  .border-hairline {
+    border-color: var(--color-border-subtle);
+  }
+
+  .hero-glow {
+    background: linear-gradient(
+      to bottom,
+      var(--hero-glow),
+      transparent
+    );
+  }
+
+  .auth-mesh-dash {
+    animation: auth-mesh-dash 1.2s linear infinite;
+  }
+
+  .auth-mesh-dash-slow {
+    animation: auth-mesh-dash 2.4s linear infinite;
+  }
+}
+
+@keyframes auth-mesh-dash {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateX(calc(100% + 1rem)) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@layer utilities {
+  .toast-enter {
+    animation: toast-enter 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toast-enter {
+      animation: none;
+    }
+  }
 }

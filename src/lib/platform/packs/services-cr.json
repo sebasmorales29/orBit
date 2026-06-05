@@ -1,0 +1,16 @@
+{
+  "id": "services-cr",
+  "label": "Servicios profesionales (CR)",
+  "description": "Consultas y proyectos, sin inventario, foco en seguimiento y cobros.",
+  "defaults": {
+    "businessTypeKey": "services",
+    "businessTypeLabel": "Servicios profesionales",
+    "currency": "CRC",
+    "usesStock": false,
+    "teamSize": "solo",
+    "salesChannels": ["whatsapp", "website"],
+    "mainChallenge": "follow_ups",
+    "successFocus": "professional",
+    "orderVolume": "light"
+  }
+}
