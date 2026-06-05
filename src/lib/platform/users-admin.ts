@@ -50,12 +50,7 @@ function gateMessage(gate: { ok: false; reason: 'unauthenticated' | 'forbidden' 
   return 'Sin permiso para esta sección de Ops.'
 }
 
-export async function listPlatformUsers(limit = 80): Promise<PlatformUsersResult> {
-  const gate = await assertPlatformAdmin()
-  if (!gate.ok) {
-    return { ok: false, code: 'NOT_AUTHORIZED', message: gateMessage(gate) }
-  }
-
+export async function queryPlatformUsers(limit = 80): Promise<PlatformUsersResult> {
   const admin = createAdminClient()
   if (!admin) {
     return { ok: false, code: 'ADMIN_NOT_CONFIGURED', message: 'Falta service role key.' }
@@ -113,10 +108,15 @@ export async function listPlatformUsers(limit = 80): Promise<PlatformUsersResult
   return { ok: true, users }
 }
 
-export async function getPlatformUserDetail(userId: string): Promise<PlatformUserDetailResult> {
+export async function listPlatformUsers(limit = 80): Promise<PlatformUsersResult> {
   const gate = await assertPlatformAdmin()
-  if (!gate.ok) return { ok: false, code: 'NOT_AUTHORIZED', message: 'Sin permiso.' }
+  if (!gate.ok) {
+    return { ok: false, code: 'NOT_AUTHORIZED', message: gateMessage(gate) }
+  }
+  return queryPlatformUsers(limit)
+}
 
+export async function queryPlatformUserDetail(userId: string): Promise<PlatformUserDetailResult> {
   const admin = createAdminClient()
   if (!admin) {
     return { ok: false, code: 'ADMIN_NOT_CONFIGURED', message: 'Falta service role key.' }
@@ -153,6 +153,12 @@ export async function getPlatformUserDetail(userId: string): Promise<PlatformUse
       member_role: membership?.role ?? null,
     },
   }
+}
+
+export async function getPlatformUserDetail(userId: string): Promise<PlatformUserDetailResult> {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) return { ok: false, code: 'NOT_AUTHORIZED', message: 'Sin permiso.' }
+  return queryPlatformUserDetail(userId)
 }
 
 export async function updatePlatformUser(input: { userId: string; full_name: string | null }) {

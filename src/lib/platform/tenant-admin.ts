@@ -61,11 +61,10 @@ function parseProfile(raw: unknown) {
   }
 }
 
-async function ensureAdmin() {
-  const gate = await assertPlatformAdmin()
-  if (!gate.ok) {
-    return { ok: false as const, code: 'NOT_AUTHORIZED' as const, message: 'Sin permiso.' }
-  }
+async function ensureAdminClient(): Promise<
+  | { ok: true; admin: NonNullable<ReturnType<typeof createAdminClient>> }
+  | { ok: false; code: 'ADMIN_NOT_CONFIGURED' | 'SCHEMA'; message: string; sqlFix?: string }
+> {
   const admin = createAdminClient()
   if (!admin) {
     return {
@@ -86,8 +85,17 @@ async function ensureAdmin() {
   return { ok: true as const, admin }
 }
 
-export async function getTenantDetail(orgId: string): Promise<TenantAdminResult<TenantDetail>> {
-  const ctx = await ensureAdmin()
+async function ensureAdmin() {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) {
+    return { ok: false as const, code: 'NOT_AUTHORIZED' as const, message: 'Sin permiso.' }
+  }
+  return ensureAdminClient()
+}
+
+/** Datos de tenant — solo usar desde páginas bajo (console)/layout (ya autenticado). */
+export async function queryTenantDetail(orgId: string): Promise<TenantAdminResult<TenantDetail>> {
+  const ctx = await ensureAdminClient()
   if (!ctx.ok) return ctx
 
   const { data: org, error } = await ctx.admin
@@ -172,6 +180,14 @@ export async function getTenantDetail(orgId: string): Promise<TenantAdminResult<
       seatCount,
     },
   }
+}
+
+export async function getTenantDetail(orgId: string): Promise<TenantAdminResult<TenantDetail>> {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) {
+    return { ok: false, code: 'NOT_AUTHORIZED', message: 'Sin permiso.' }
+  }
+  return queryTenantDetail(orgId)
 }
 
 export interface UpdateTenantInput {

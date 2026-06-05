@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { OpsContactRequestDetail } from '@/components/ops/OpsContactRequestDetail'
-import { getPlatformContactRequest } from '@/lib/platform/contact-requests'
+import { queryPlatformContactRequest } from '@/lib/platform/contact-requests'
 
 export default async function OpsInquiryDetailPage({
   params,
@@ -9,7 +9,7 @@ export default async function OpsInquiryDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const result = await getPlatformContactRequest(id)
+  const result = await queryPlatformContactRequest(id)
 
   if (!result.ok) {
     if (result.message === 'Solicitud no encontrada.') notFound()

@@ -3,7 +3,7 @@ import { OpsConfigNotice } from '@/components/ops/OpsConfigNotice'
 import { OpsSchemaNotice } from '@/components/ops/OpsSchemaNotice'
 import { OpsTenantsTable } from '@/components/ops/OpsTenantsTable'
 import { checkPlatformSchema } from '@/lib/platform/schema-health'
-import { listProvisionedTenants } from '@/lib/platform/provision-tenant'
+import { queryProvisionedTenants } from '@/lib/platform/provision-tenant'
 import {
   filterTenantRows,
   parseTenantListFilter,
@@ -25,7 +25,7 @@ export default async function OpsTenantsPage({
     return <OpsSchemaNotice missingColumns={schema.missingColumns} sqlFix={schema.sqlFix} />
   }
 
-  const result = await listProvisionedTenants()
+  const result = await queryProvisionedTenants()
 
   if (!result.ok) {
     if (result.code === 'ADMIN_NOT_CONFIGURED') {

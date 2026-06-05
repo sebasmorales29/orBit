@@ -274,23 +274,8 @@ function parseProfileMeta(raw: unknown): {
   }
 }
 
-export async function listProvisionedTenants(): Promise<TenantListResult> {
-  const gate = await assertPlatformAdmin()
-  if (!gate.ok) {
-    if (gate.reason === 'not_configured') {
-      return {
-        ok: false,
-        code: 'ADMIN_NOT_CONFIGURED',
-        message: 'Configurá ORBIT_PLATFORM_ADMIN_EMAILS en el servidor.',
-      }
-    }
-    return {
-      ok: false,
-      code: 'NOT_AUTHORIZED',
-      message: 'No tenés permiso de operador de plataforma.',
-    }
-  }
-
+/** Listado de tenants — solo desde consola Ops (layout ya validó acceso). */
+export async function queryProvisionedTenants(): Promise<TenantListResult> {
   const admin = createAdminClient()
   if (!admin) {
     return {
@@ -363,4 +348,23 @@ export async function listProvisionedTenants(): Promise<TenantListResult> {
   })
 
   return { ok: true, tenants }
+}
+
+export async function listProvisionedTenants(): Promise<TenantListResult> {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) {
+    if (gate.reason === 'not_configured') {
+      return {
+        ok: false,
+        code: 'ADMIN_NOT_CONFIGURED',
+        message: 'Configurá ORBIT_PLATFORM_ADMIN_EMAILS en el servidor.',
+      }
+    }
+    return {
+      ok: false,
+      code: 'NOT_AUTHORIZED',
+      message: 'No tenés permiso de operador de plataforma.',
+    }
+  }
+  return queryProvisionedTenants()
 }

@@ -108,18 +108,20 @@ export async function getOpsSessionAccess(): Promise<OpsSessionAccess | null> {
   }
 }
 
-export async function listOpsAdmins(): Promise<OpsAccessResult<OpsAdminRow[]>> {
-  const ctx = await ensureSuper()
-  if (!ctx.ok) return ctx
+export async function queryOpsAdmins(): Promise<OpsAccessResult<OpsAdminRow[]>> {
+  const admin = createAdminClient()
+  if (!admin) {
+    return { ok: false, code: 'ADMIN_NOT_CONFIGURED', message: 'Falta SUPABASE_SERVICE_ROLE_KEY.' }
+  }
 
   const superEmail = getSuperAdminEmail()
-  const { data: rows, error } = await ctx.admin.from('platform_ops_admins').select('*').order('created_at', {
+  const { data: rows, error } = await admin.from('platform_ops_admins').select('*').order('created_at', {
     ascending: true,
   })
 
   if (error) {
     if (error.message.includes('does not exist')) {
-      return { ok: true, data: superEmail ? [await superAdminRow(ctx.admin, superEmail)] : [] }
+      return { ok: true, data: superEmail ? [await superAdminRow(admin, superEmail)] : [] }
     }
     return { ok: false, code: 'FAILED', message: error.message }
   }
@@ -127,13 +129,13 @@ export async function listOpsAdmins(): Promise<OpsAccessResult<OpsAdminRow[]>> {
   const list: OpsAdminRow[] = []
 
   if (superEmail) {
-    list.push(await superAdminRow(ctx.admin, superEmail))
+    list.push(await superAdminRow(admin, superEmail))
   }
 
   for (const row of rows ?? []) {
     const mfaEnrolled = row.user_id
-      ? await userHasVerifiedMfa(ctx.admin, row.user_id)
-      : await userHasVerifiedMfaByEmail(ctx.admin, row.email)
+      ? await userHasVerifiedMfa(admin, row.user_id)
+      : await userHasVerifiedMfaByEmail(admin, row.email)
     list.push({
       id: row.id,
       email: row.email,
@@ -146,6 +148,12 @@ export async function listOpsAdmins(): Promise<OpsAccessResult<OpsAdminRow[]>> {
   }
 
   return { ok: true, data: list }
+}
+
+export async function listOpsAdmins(): Promise<OpsAccessResult<OpsAdminRow[]>> {
+  const ctx = await ensureSuper()
+  if (!ctx.ok) return ctx
+  return queryOpsAdmins()
 }
 
 async function superAdminRow(

@@ -95,12 +95,9 @@ export async function submitPlatformContactRequest(
   return { ok: true, id: data.id }
 }
 
-export async function listPlatformContactRequests(options?: {
+export async function queryPlatformContactRequests(options?: {
   includeArchived?: boolean
 }): Promise<{ ok: true; requests: ContactRequestRow[] } | { ok: false; message: string }> {
-  const gate = await assertPlatformAdmin()
-  if (!gate.ok) return { ok: false, message: 'Sin permiso.' }
-
   const admin = createAdminClient()
   if (!admin) return { ok: false, message: 'Falta SUPABASE_SERVICE_ROLE_KEY.' }
 
@@ -123,12 +120,17 @@ export async function listPlatformContactRequests(options?: {
   return { ok: true, requests: (data ?? []) as ContactRequestRow[] }
 }
 
-export async function getPlatformContactRequest(
-  id: string
-): Promise<{ ok: true; request: ContactRequestRow } | { ok: false; message: string }> {
+export async function listPlatformContactRequests(options?: {
+  includeArchived?: boolean
+}): Promise<{ ok: true; requests: ContactRequestRow[] } | { ok: false; message: string }> {
   const gate = await assertPlatformAdmin()
   if (!gate.ok) return { ok: false, message: 'Sin permiso.' }
+  return queryPlatformContactRequests(options)
+}
 
+export async function queryPlatformContactRequest(
+  id: string
+): Promise<{ ok: true; request: ContactRequestRow } | { ok: false; message: string }> {
   const admin = createAdminClient()
   if (!admin) return { ok: false, message: 'Falta SUPABASE_SERVICE_ROLE_KEY.' }
 
@@ -142,6 +144,14 @@ export async function getPlatformContactRequest(
   if (!data) return { ok: false, message: 'Solicitud no encontrada.' }
 
   return { ok: true, request: data as ContactRequestRow }
+}
+
+export async function getPlatformContactRequest(
+  id: string
+): Promise<{ ok: true; request: ContactRequestRow } | { ok: false; message: string }> {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) return { ok: false, message: 'Sin permiso.' }
+  return queryPlatformContactRequest(id)
 }
 
 export async function updateContactRequestStatus(

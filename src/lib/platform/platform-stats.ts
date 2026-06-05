@@ -36,22 +36,8 @@ function monthStartIso(): string {
   return new Date(d.getFullYear(), d.getMonth(), 1).toISOString()
 }
 
-export async function getPlatformStats(): Promise<PlatformStatsResult> {
-  const gate = await assertPlatformAdmin()
-  if (!gate.ok) {
-    const message =
-      gate.reason === 'unauthenticated'
-        ? 'Sesión expirada. Volvé a iniciar sesión y abrí /ops de nuevo.'
-        : gate.reason === 'not_configured'
-          ? 'Ops no está configurado en el servidor (ORBIT_PLATFORM_SUPER_ADMIN_EMAIL).'
-          : 'Tu cuenta no tiene acceso a Operaciones.'
-    return {
-      ok: false,
-      code: 'NOT_AUTHORIZED',
-      message,
-    }
-  }
-
+/** Datos de stats — solo usar desde páginas bajo (console)/layout (ya autenticado). */
+export async function queryPlatformStats(): Promise<PlatformStatsResult> {
   const admin = createAdminClient()
   if (!admin) {
     return {
@@ -157,6 +143,20 @@ export async function getPlatformStats(): Promise<PlatformStatsResult> {
       generatedAt: new Date().toISOString(),
     },
   }
+}
+
+export async function getPlatformStats(): Promise<PlatformStatsResult> {
+  const gate = await assertPlatformAdmin()
+  if (!gate.ok) {
+    const message =
+      gate.reason === 'unauthenticated'
+        ? 'Sesión expirada. Volvé a iniciar sesión y abrí /ops de nuevo.'
+        : gate.reason === 'not_configured'
+          ? 'Ops no está configurado en el servidor (ORBIT_PLATFORM_SUPER_ADMIN_EMAIL).'
+          : 'Tu cuenta no tiene acceso a Operaciones.'
+    return { ok: false, code: 'NOT_AUTHORIZED', message }
+  }
+  return queryPlatformStats()
 }
 
 export function formatCents(cents: number, currency: 'CRC' | 'USD' = 'CRC'): string {

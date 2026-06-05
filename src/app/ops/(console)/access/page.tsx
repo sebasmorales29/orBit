@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { OpsAccessClient } from '@/components/ops/OpsAccessClient'
 import { assertSuperAdmin } from '@/lib/platform/admin'
-import { listOpsAdmins } from '@/lib/platform/ops-access'
+import { queryOpsAdmins } from '@/lib/platform/ops-access'
 
 export default async function OpsAccessPage() {
   const gate = await assertSuperAdmin()
@@ -9,7 +9,7 @@ export default async function OpsAccessPage() {
     redirect('/ops')
   }
 
-  const result = await listOpsAdmins()
+  const result = await queryOpsAdmins()
   if (!result.ok) {
     return <p className="text-[14px] text-red-600">{result.message}</p>
   }
