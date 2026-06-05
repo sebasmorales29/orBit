@@ -93,11 +93,8 @@ export async function getOpsSessionAccess(): Promise<OpsSessionAccess | null> {
   const supabaseEmail = await getSessionUserEmail()
   if (!supabaseEmail) return null
 
-  const { createClient } = await import('@/lib/supabase/server')
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { getAuthUser } = await import('@/lib/supabase/server')
+  const user = await getAuthUser()
   if (!user?.id) return null
 
   const access = await resolveOpsAccess(supabaseEmail)

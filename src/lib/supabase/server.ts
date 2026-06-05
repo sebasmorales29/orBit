@@ -1,8 +1,9 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { cache } from 'react'
 import { getSupabaseEnv } from '@/lib/supabase/env'
 
-export async function createClient() {
+export const createClient = cache(async () => {
   const env = getSupabaseEnv()
   if (!env) {
     throw new Error('SUPABASE_NOT_CONFIGURED')
@@ -26,4 +27,13 @@ export async function createClient() {
       },
     },
   })
-}
+})
+
+/** Una sola lectura de usuario por request (evita perder sesión en Ops). */
+export const getAuthUser = cache(async () => {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  return user
+})

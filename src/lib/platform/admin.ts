@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
+import { cache } from 'react'
+import { createClient, getAuthUser } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { resolveOpsAccess } from '@/lib/platform/ops-access'
 
@@ -29,18 +30,12 @@ export function isSuperAdminEmail(email: string | null | undefined): boolean {
 }
 
 export async function getSessionUserEmail(): Promise<string | null> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getAuthUser()
   return user?.email ?? null
 }
 
 export async function getSessionUserId(): Promise<string | null> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getAuthUser()
   return user?.id ?? null
 }
 
@@ -51,7 +46,7 @@ export async function isPlatformAdminEmail(
   return access.allowed
 }
 
-export async function assertSuperAdmin(): Promise<
+async function assertSuperAdminUncached(): Promise<
   | { ok: true; email: string; userId: string }
   | { ok: false; reason: 'unauthenticated' | 'forbidden' | 'not_configured' }
 > {
@@ -60,18 +55,16 @@ export async function assertSuperAdmin(): Promise<
     return { ok: false, reason: 'not_configured' }
   }
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const user = await getAuthUser()
   if (!user?.email || !user.id) return { ok: false, reason: 'unauthenticated' }
   if (!isSuperAdminEmail(user.email)) return { ok: false, reason: 'forbidden' }
 
   return { ok: true, email: user.email.trim().toLowerCase(), userId: user.id }
 }
 
-export async function assertPlatformAdmin(): Promise<
+export const assertSuperAdmin = cache(assertSuperAdminUncached)
+
+async function assertPlatformAdminUncached(): Promise<
   | { ok: true; email: string; userId: string; isSuper: boolean }
   | { ok: false; reason: 'unauthenticated' | 'forbidden' | 'not_configured' }
 > {
@@ -80,11 +73,7 @@ export async function assertPlatformAdmin(): Promise<
     return { ok: false, reason: 'not_configured' }
   }
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const user = await getAuthUser()
   if (!user?.email || !user.id) return { ok: false, reason: 'unauthenticated' }
 
   const email = user.email.trim().toLowerCase()
@@ -94,6 +83,8 @@ export async function assertPlatformAdmin(): Promise<
 
   return { ok: true, email, userId: user.id, isSuper: access.isSuper }
 }
+
+export const assertPlatformAdmin = cache(assertPlatformAdminUncached)
 
 /** Tabla platform_ops_admins disponible (migración aplicada). */
 export async function isOpsAccessTableReady(): Promise<boolean> {
