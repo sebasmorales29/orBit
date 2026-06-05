@@ -12,12 +12,12 @@ export function OpsAccessAdminDetailModal({
   admin: OpsAdminRow | null
   onClose: () => void
 }) {
-  const closeBtnRef = useRef<HTMLButtonElement | null>(null)
+  const dialogRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (!admin) return
 
-    closeBtnRef.current?.focus()
+    dialogRef.current?.focus()
 
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -44,9 +44,11 @@ export function OpsAccessAdminDetailModal({
         onClick={onClose}
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        className="relative w-full max-w-md rounded-3xl border border-border bg-surface p-6 shadow-2xl"
+        tabIndex={-1}
+        className="relative w-full max-w-md rounded-3xl border border-border bg-surface p-6 shadow-2xl outline-none"
       >
         <h2 className="text-lg font-semibold text-foreground">Detalle del operador</h2>
         <p className="mt-1 text-[13px] text-muted">{admin.email}</p>
@@ -104,7 +106,6 @@ export function OpsAccessAdminDetailModal({
             </Link>
           )}
           <Button
-            ref={closeBtnRef}
             type="button"
             variant="secondary"
             className="flex-1"
