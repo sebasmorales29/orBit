@@ -11,6 +11,7 @@ import {
   digitsFromFormatted,
   formatNationalNumber,
   splitPhoneValue,
+  stripLeadingDialCode,
   toE164,
 } from '@/lib/phone/format'
 import { useTranslations } from '@/components/i18n/LocaleProvider'
@@ -55,8 +56,10 @@ export function PhoneInput({
   const [display, setDisplay] = useState('')
   const [pickerOpen, setPickerOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
+  const isFocusedRef = useRef(false)
 
   useEffect(() => {
+    if (isFocusedRef.current) return
     const split = splitPhoneValue(value, defaultCountry)
     setCountry(split.country)
     setDisplay(split.display)
@@ -71,7 +74,6 @@ export function PhoneInput({
   }, [])
 
   const selected = countries.find((c) => c.iso === country) ?? countries[0]
-  const dialDigits = selected.dial.replace(/\D/g, '')
 
   function emit(countryCode: CountryCode, nationalDigits: string) {
     onChange(nationalDigits ? toE164(countryCode, nationalDigits) : '')
@@ -80,28 +82,26 @@ export function PhoneInput({
   function handleCountryPick(iso: CountryCode) {
     setCountry(iso)
     setPickerOpen(false)
-    const digits = digitsFromFormatted(display)
+    const digits = stripLeadingDialCode(digitsFromFormatted(display), iso)
     setDisplay(formatNationalNumber(digits, iso))
     emit(iso, digits)
   }
 
   function handleInputChange(raw: string) {
-    let digits = digitsFromFormatted(raw)
-
-    // Si el usuario pega/escribe el prefijo del país (ej. 5068888...), lo removemos
-    // para que el input siempre sea solo número nacional. El código vive en el dropdown.
-    if (dialDigits) {
-      if (digits === dialDigits) {
-        digits = ''
-      } else if (digits.startsWith(dialDigits) && digits.length > dialDigits.length) {
-        digits = digits.slice(dialDigits.length)
-      }
-    }
-
+    const digits = stripLeadingDialCode(digitsFromFormatted(raw), country)
     const formatted = formatNationalNumber(digits, country)
     setDisplay(formatted)
     emit(country, digits)
   }
+
+  function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    e.preventDefault()
+    const pasted = e.clipboardData.getData('text')
+    handleInputChange(pasted)
+  }
+
+  const defaultPlaceholder =
+    country === 'CR' ? '8888 7777' : country === 'US' ? '(555) 555-5555' : '8888 7777'
 
   return (
     <div className={cn('space-y-1.5', className)} ref={rootRef}>
@@ -167,9 +167,16 @@ export function PhoneInput({
           autoComplete="tel-national"
           disabled={disabled}
           required={required}
-          placeholder={placeholder}
+          placeholder={placeholder ?? defaultPlaceholder}
           value={display}
           onChange={(e) => handleInputChange(e.target.value)}
+          onPaste={handlePaste}
+          onFocus={() => {
+            isFocusedRef.current = true
+          }}
+          onBlur={() => {
+            isFocusedRef.current = false
+          }}
           className="min-w-0 flex-1 bg-transparent px-3 py-2.5 text-[14px] text-foreground outline-none placeholder:text-muted-foreground"
         />
       </div>

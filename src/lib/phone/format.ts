@@ -1,11 +1,39 @@
-import { AsYouType, parsePhoneNumberFromString } from 'libphonenumber-js'
+import {
+  AsYouType,
+  formatIncompletePhoneNumber,
+  getCountryCallingCode,
+  parsePhoneNumberFromString,
+} from 'libphonenumber-js'
 import type { CountryCode } from 'libphonenumber-js'
 import { DEFAULT_PHONE_COUNTRY } from '@/lib/phone/countries'
 
-export function formatNationalNumber(digits: string, country: CountryCode): string {
-  const raw = digits.replace(/\D/g, '')
+/** Quita el código de país si el usuario lo escribe en el campo nacional. */
+export function stripLeadingDialCode(digits: string, country: CountryCode): string {
+  let raw = digits.replace(/\D/g, '')
   if (!raw) return ''
-  return new AsYouType(country).input(raw)
+
+  const dial = getCountryCallingCode(country)
+
+  if (raw.startsWith('00')) {
+    raw = raw.slice(2)
+  }
+
+  if (raw.startsWith(dial)) {
+    return raw.slice(dial.length)
+  }
+
+  // Ej. escribe "5", "50", "506" mientras intenta repetir +506 en el input
+  if (dial.startsWith(raw)) {
+    return ''
+  }
+
+  return raw
+}
+
+export function formatNationalNumber(digits: string, country: CountryCode): string {
+  const raw = stripLeadingDialCode(digits.replace(/\D/g, ''), country)
+  if (!raw) return ''
+  return formatIncompletePhoneNumber(raw, country)
 }
 
 export function digitsFromFormatted(value: string): string {
@@ -47,7 +75,7 @@ export function splitPhoneValue(
     }
   }
 
-  const digits = digitsFromFormatted(trimmed)
+  const digits = stripLeadingDialCode(digitsFromFormatted(trimmed), defaultCountry)
   return {
     country: defaultCountry,
     nationalDigits: digits,
