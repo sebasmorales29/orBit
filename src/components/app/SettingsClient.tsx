@@ -20,6 +20,8 @@ import { cn } from '@/lib/utils'
 import { useTheme } from '@/components/theme/ThemeProvider'
 import { SettingsSections } from '@/components/settings/SettingsSections'
 import { BillingSettingsPanel } from '@/components/settings/BillingSettingsPanel'
+import { TenantSwitcher } from '@/components/app/TenantSwitcher'
+import type { TenantPickerOrg } from '@/components/app/TenantPickerModal'
 
 const BUSINESS_TYPE_KEYS = [
   'food',
@@ -38,6 +40,7 @@ type BusinessTypeKey = (typeof BUSINESS_TYPE_KEYS)[number]
 
 export interface SettingsInitialData {
   organizationId: string
+  organizations: TenantPickerOrg[]
   businessName: string
   businessType: string | null
   currency: CurrencyCode
@@ -520,6 +523,19 @@ function SettingsClientInner({ initial }: { initial: SettingsInitialData }) {
 
   const securityView = (
     <div className="space-y-6">
+      {initial.organizations.length > 1 && (
+        <div>
+          <SectionLabel>{t('app.settings.organization')}</SectionLabel>
+          <SettingsCard className="mt-2 p-4">
+            <TenantSwitcher
+              orgs={initial.organizations}
+              activeOrgId={initial.organizationId}
+              currentOrgName={initial.businessName}
+            />
+          </SettingsCard>
+        </div>
+      )}
+
       <div>
         <SectionLabel>{t('app.settings.account')}</SectionLabel>
         <SettingsCard className="mt-2 divide-y divide-border">

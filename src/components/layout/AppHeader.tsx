@@ -7,6 +7,7 @@ import { BrandLogo } from '@/components/brand/BrandLogo'
 import { appShellClass } from '@/components/layout/app-layout'
 import { AppHeaderMenu } from '@/components/layout/AppHeaderMenu'
 import { ChromeControls } from '@/components/layout/ChromeControls'
+import { TenantNavDropdown } from '@/components/layout/TenantNavDropdown'
 import { useTranslations } from '@/components/i18n/LocaleProvider'
 import { transitionColors } from '@/lib/motion'
 import { cn } from '@/lib/utils'
@@ -67,6 +68,7 @@ export function AppHeader({
         </div>
 
         <div className="flex h-10 shrink-0 items-center gap-2">
+          <TenantNavDropdown />
           <AppHeaderMenu actionsBeforeMenu={actionsBeforeMenu} onCustomize={onCustomize} />
           <Link
             href="/ajustes"

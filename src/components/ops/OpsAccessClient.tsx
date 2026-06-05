@@ -11,6 +11,7 @@ import {
 } from '@/lib/platform/actions'
 import type { OpsAdminRow } from '@/lib/platform/ops-access'
 import { Button } from '@/components/ui/Button'
+import { OpsAccessAdminDetailModal } from '@/components/ops/OpsAccessAdminDetailModal'
 import { OpsSuperAdminConfirmModal } from '@/components/ops/OpsSuperAdminConfirmModal'
 import { Input } from '@/components/ui/Input'
 import { useToast } from '@/components/ui/toast'
@@ -20,6 +21,7 @@ export function OpsAccessClient({ admins }: { admins: OpsAdminRow[] }) {
   const toast = useToast()
   const [email, setEmail] = useState('')
   const [busyId, setBusyId] = useState<string | null>(null)
+  const [detailAdmin, setDetailAdmin] = useState<OpsAdminRow | null>(null)
   const [superAction, setSuperAction] = useState<
     | null
     | (
@@ -61,6 +63,7 @@ export function OpsAccessClient({ admins }: { admins: OpsAdminRow[] }) {
 
   return (
     <div className="space-y-8">
+      <OpsAccessAdminDetailModal admin={detailAdmin} onClose={() => setDetailAdmin(null)} />
       <OpsSuperAdminConfirmModal
         open={Boolean(superAction)}
         title="orBit Platform — Seguridad reforzada"
@@ -201,6 +204,13 @@ export function OpsAccessClient({ admins }: { admins: OpsAdminRow[] }) {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setDetailAdmin(row)}
+                      className="rounded-lg border border-border px-2 py-1 text-[12px] hover:bg-surface-raised"
+                    >
+                      Ver detalle
+                    </button>
                     {!row.is_super && (
                       <>
                         <button

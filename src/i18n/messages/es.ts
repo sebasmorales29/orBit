@@ -12,6 +12,7 @@ const es = {
     hidePassword: 'Ocultar contraseña',
     active: 'Activo',
     inactive: 'Inactivo',
+    cancel: 'Cancelar',
     openMenu: 'Abrir menú',
     closeMenu: 'Cerrar menú',
   },
@@ -950,6 +951,14 @@ const es = {
       inventory: 'Inventario',
       inventoryHint: 'Si vendés productos físicos, activá el control de stock en la app.',
       account: 'Cuenta',
+      organization: 'Organización',
+      activeTenantHint: 'Estás trabajando en este tenant. Podés cambiar cuando quieras.',
+      switchTenant: 'Cambiar tenant',
+      switchTenantTitle: 'Cambiar tenant',
+      switchTenantDescription:
+        'Seleccioná la organización con la que querés seguir trabajando en orBit.',
+      switchTenantConfirm: 'Cambiar',
+      tenantSwitched: 'Tenant cambiado',
       email: 'Correo de acceso',
       emailHint: 'Para cambiar el correo, contactá soporte.',
       privacy: 'Política de privacidad',
@@ -958,6 +967,9 @@ const es = {
       saveBusiness: 'Guardar negocio',
       saved: 'Cambios guardados',
       errorSave: 'No se pudieron guardar los cambios.',
+    },
+    tenant: {
+      activeNow: 'Activo ahora',
     },
     hoy: {
       title: 'Hoy',

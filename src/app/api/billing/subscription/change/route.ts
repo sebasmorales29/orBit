@@ -10,6 +10,8 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import type { SubscriptionPlanId } from '@/lib/onboarding/plans'
 import { SUBSCRIPTION_PLAN_IDS } from '@/lib/onboarding/plans'
+import { ACTIVE_ORG_COOKIE } from '@/lib/org'
+import { cookies } from 'next/headers'
 
 function asPlanId(value: string | null | undefined): SubscriptionPlanId {
   if (value && SUBSCRIPTION_PLAN_IDS.includes(value as SubscriptionPlanId)) {
@@ -45,13 +47,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Configuración incompleta.' }, { status: 500 })
   }
 
+  const cookieStore = await cookies()
+  const activeOrgId = cookieStore.get(ACTIVE_ORG_COOKIE)?.value ?? null
+  if (!activeOrgId) {
+    return NextResponse.json({ message: 'Seleccioná un tenant.' }, { status: 409 })
+  }
+
   const { data: membership } = await supabase
     .from('organization_members')
     .select(
       'organization_id, organizations!inner(id, name, subscription_owner_id, subscription_status, selected_plan, billing_cycle)'
     )
     .eq('user_id', user.id)
-    .limit(1)
+    .eq('organization_id', activeOrgId)
     .maybeSingle()
 
   if (!membership?.organization_id) {

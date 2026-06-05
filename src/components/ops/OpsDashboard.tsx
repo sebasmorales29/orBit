@@ -14,32 +14,35 @@ function StatCard({
   hint?: string
   href?: string
 }) {
-  const valueNode = href ? (
-    <Link
-      href={href}
-      className={cn(
-        'mt-2 inline-block text-2xl font-semibold tabular-nums text-foreground',
-        'rounded-lg transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40'
-      )}
-    >
-      {value}
-    </Link>
-  ) : (
-    <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{value}</p>
-  )
-
-  return (
-    <div className="rounded-2xl border border-border bg-surface p-4">
+  const inner = (
+    <>
       <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         {label}
       </p>
-      {valueNode}
+      <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{value}</p>
       {hint && <p className="mt-1 text-[12px] text-muted">{hint}</p>}
       {href && (
-        <p className="mt-1 text-[11px] text-accent/80">Ver detalle →</p>
+        <p className="mt-2 text-[11px] font-medium text-accent">Ver detalle →</p>
       )}
-    </div>
+    </>
   )
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={cn(
+          'block rounded-2xl border border-border bg-surface p-4 transition-colors',
+          'hover:border-accent/40 hover:bg-surface-raised',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40'
+        )}
+      >
+        {inner}
+      </Link>
+    )
+  }
+
+  return <div className="rounded-2xl border border-border bg-surface p-4">{inner}</div>
 }
 
 export function OpsDashboard({ stats }: { stats: PlatformStats }) {

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prepareBillingCheckout, validatePlanCycle } from '@/lib/billing/prepare-checkout'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { ACTIVE_ORG_COOKIE } from '@/lib/org'
+import { cookies } from 'next/headers'
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -24,15 +26,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: validated.message }, { status: 400 })
   }
 
+  const cookieStore = await cookies()
+  const activeOrgId = cookieStore.get(ACTIVE_ORG_COOKIE)?.value ?? null
+
   const { data: membership } = await supabase
     .from('organization_members')
     .select('organization_id, role, organizations!inner(id, name, subscription_owner_id, subscription_status)')
     .eq('user_id', user.id)
-    .limit(1)
+    .eq('organization_id', body.organizationId ?? activeOrgId ?? '')
     .maybeSingle()
 
   if (!membership?.organization_id) {
-    return NextResponse.json({ message: 'Completá la configuración primero.' }, { status: 400 })
+    return NextResponse.json(
+      { message: 'Seleccioná un tenant antes de continuar.' },
+      { status: 409 }
+    )
   }
 
   const org = membership.organizations as unknown as {
@@ -40,10 +48,6 @@ export async function POST(request: Request) {
     name: string
     subscription_owner_id: string | null
     subscription_status: string
-  }
-
-  if (body.organizationId && body.organizationId !== org.id) {
-    return NextResponse.json({ message: 'Organización no coincide.' }, { status: 403 })
   }
 
   if (org.subscription_owner_id && org.subscription_owner_id !== user.id) {

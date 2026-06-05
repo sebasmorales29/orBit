@@ -5,6 +5,8 @@ import {
 } from '@/lib/billing/finalize-payment'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { ACTIVE_ORG_COOKIE } from '@/lib/org'
+import { cookies } from 'next/headers'
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -23,13 +25,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Configuración incompleta.' }, { status: 500 })
   }
 
+  const cookieStore = await cookies()
+  const activeOrgId = cookieStore.get(ACTIVE_ORG_COOKIE)?.value ?? null
+  if (!activeOrgId) {
+    return NextResponse.json({ message: 'Seleccioná un tenant.' }, { status: 409 })
+  }
+
   const { data: membership } = await supabase
     .from('organization_members')
     .select(
       'organization_id, organizations!inner(id, subscription_owner_id, subscription_status)'
     )
     .eq('user_id', user.id)
-    .limit(1)
+    .eq('organization_id', activeOrgId)
     .maybeSingle()
 
   if (!membership?.organization_id) {

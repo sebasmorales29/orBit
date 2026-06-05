@@ -43,8 +43,26 @@ export default async function AjustesPage() {
     .select('user_id', { count: 'exact', head: true })
     .eq('organization_id', org.id)
 
+  const { data: memberships } = await supabase
+    .from('organization_members')
+    .select('organization_id, organizations!inner(id, name, onboarding_completed)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: true })
+
+  const organizations = (memberships ?? [])
+    .map((m) => {
+      const o = m.organizations as unknown as {
+        id: string
+        name: string
+        onboarding_completed: boolean
+      } | null
+      return o?.onboarding_completed ? { id: o.id, name: o.name } : null
+    })
+    .filter(Boolean) as { id: string; name: string }[]
+
   const initial: SettingsInitialData = {
     organizationId: org.id,
+    organizations,
     businessName: org.name,
     businessType: org.business_type,
     currency: org.currency as CurrencyCode,
