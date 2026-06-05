@@ -120,6 +120,12 @@ export function OpsDashboard({ stats }: { stats: PlatformStats }) {
             value={String(stats.membersTotal)}
             href="/ops/users"
           />
+          <StatCard
+            label="Solicitudes nuevas"
+            value={String(stats.contactRequestsNew)}
+            hint="Leads del landing en estado Nuevo"
+            href="/ops/inquiries"
+          />
           <StatCard label="Consultas abiertas" value={String(stats.leadsOpen)} />
         </div>
       </section>

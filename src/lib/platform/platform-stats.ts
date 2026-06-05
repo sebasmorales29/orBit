@@ -12,6 +12,7 @@ export type PlatformStats = {
   tenantsOps: number
   onboardingInProgress: number
   membersTotal: number
+  contactRequestsNew: number
   ordersThisMonth: number
   gmvThisMonth: number
   gmvCurrency: 'CRC' | 'USD'
@@ -71,6 +72,7 @@ export async function getPlatformStats(): Promise<PlatformStatsResult> {
     { count: membersTotal },
     { data: monthOrders },
     { count: leadsOpen },
+    { count: contactRequestsNew },
   ] = await Promise.all([
     admin
       .from('organizations')
@@ -83,6 +85,11 @@ export async function getPlatformStats(): Promise<PlatformStatsResult> {
       .from('leads')
       .select('*', { count: 'exact', head: true })
       .in('status', ['nuevo', 'interesado', 'cotizado', 'por_cerrar']),
+    admin
+      .from('platform_contact_requests')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'new')
+      .is('archived_at', null),
   ])
 
   const tenants = orgs ?? []
@@ -134,6 +141,7 @@ export async function getPlatformStats(): Promise<PlatformStatsResult> {
       tenantsOps,
       onboardingInProgress,
       membersTotal: membersTotal ?? 0,
+      contactRequestsNew: contactRequestsNew ?? 0,
       ordersThisMonth: orders.length,
       gmvThisMonth,
       gmvCurrency,
