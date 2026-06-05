@@ -15,7 +15,7 @@ export default async function OpsConsoleLayout({ children }: { children: React.R
   const status = await getOpsMfaStatus()
 
   if (status?.mfaRequired && !status.satisfied) {
-    redirect('/ops/mfa')
+    redirect('/ops/login')
   }
 
   const tableReady = await isOpsAccessTableReady()

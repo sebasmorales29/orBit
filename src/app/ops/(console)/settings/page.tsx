@@ -50,7 +50,7 @@ export default async function OpsSettingsPage() {
 
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
-            href="/ops/mfa"
+            href="/ops/login"
             className="rounded-xl border border-border bg-surface-raised px-4 py-2 text-[13px] font-medium text-foreground hover:bg-surface-hover"
           >
             Verificar / configurar MFA
