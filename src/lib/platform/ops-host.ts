@@ -33,11 +33,25 @@ export function normalizeHost(host: string | null | undefined): string {
   return (host ?? '').split(':')[0].toLowerCase()
 }
 
-/** true cuando ORBIT_OPS_HOST y NEXT_PUBLIC_APP_URL apuntan a hosts distintos. */
+/**
+ * Vercel Hobby no permite agregar ops.<proyecto>.vercel.app como dominio extra.
+ * Si ORBIT_OPS_HOST usa ese patrón, ignoramos el split para no romper /ops.
+ */
+export function isUnsupportedVercelOpsSubdomain(): boolean {
+  const ops = getOpsHost()
+  const pub = getPublicAppHost()
+  if (!ops || !pub) return false
+  if (!pub.endsWith('.vercel.app')) return false
+  return ops === `ops.${pub}` || ops.endsWith(`.${pub}`)
+}
+
+/** true cuando ORBIT_OPS_HOST y NEXT_PUBLIC_APP_URL apuntan a hosts distintos y son válidos. */
 export function hostSplitEnabled(): boolean {
   const ops = getOpsHost()
   const pub = getPublicAppHost()
-  return Boolean(ops && pub && ops !== pub)
+  if (!ops || !pub || ops === pub) return false
+  if (isUnsupportedVercelOpsSubdomain()) return false
+  return true
 }
 
 export function isOpsHost(host: string | null | undefined): boolean {
