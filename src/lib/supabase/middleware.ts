@@ -10,10 +10,15 @@ import {
   opsOrigin,
 } from '@/lib/platform/ops-host'
 
-function redirectWithCookies(url: URL, from: NextResponse) {
-  const res = NextResponse.redirect(url)
+type SessionIdentity = {
+  id: string
+  email: string
+  userMetadata: Record<string, unknown> | undefined
+}
+
+function copyCookies(from: NextResponse, to: NextResponse) {
   from.cookies.getAll().forEach((cookie) => {
-    res.cookies.set(cookie.name, cookie.value, {
+    to.cookies.set(cookie.name, cookie.value, {
       path: cookie.path,
       domain: cookie.domain,
       expires: cookie.expires,
@@ -23,7 +28,37 @@ function redirectWithCookies(url: URL, from: NextResponse) {
       sameSite: cookie.sameSite as 'lax' | 'strict' | 'none' | undefined,
     })
   })
+}
+
+function redirectWithCookies(url: URL, from: NextResponse) {
+  const res = NextResponse.redirect(url)
+  copyCookies(from, res)
   return res
+}
+
+function buildNextResponse(requestHeaders: Headers, cookieSource?: NextResponse) {
+  const response = NextResponse.next({ request: { headers: requestHeaders } })
+  if (cookieSource) copyCookies(cookieSource, response)
+  return response
+}
+
+async function resolveSessionIdentity(
+  supabase: ReturnType<typeof createServerClient>
+): Promise<SessionIdentity | null> {
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const claims = claimsData?.claims
+  if (!claims?.sub) return null
+
+  const email = typeof claims.email === 'string' ? claims.email.trim() : null
+  if (!email) return null
+
+  const raw = claims as Record<string, unknown>
+  const userMetadata =
+    raw.user_metadata && typeof raw.user_metadata === 'object'
+      ? (raw.user_metadata as Record<string, unknown>)
+      : undefined
+
+  return { id: claims.sub, email, userMetadata }
 }
 
 export async function updateSession(request: NextRequest) {
@@ -31,8 +66,7 @@ export async function updateSession(request: NextRequest) {
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set('x-pathname', pathname)
 
-  const next = () => NextResponse.next({ request: { headers: requestHeaders } })
-  let supabaseResponse = next()
+  let supabaseResponse = buildNextResponse(requestHeaders)
 
   const env = getSupabaseEnv()
   if (!env) {
@@ -44,41 +78,32 @@ export async function updateSession(request: NextRequest) {
       getAll() {
         return request.cookies.getAll()
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet, cacheHeaders) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-        supabaseResponse = next()
+        supabaseResponse = buildNextResponse(requestHeaders, supabaseResponse)
         cookiesToSet.forEach(({ name, value, options }) =>
           supabaseResponse.cookies.set(name, value, options)
         )
+        if (cacheHeaders) {
+          Object.entries(cacheHeaders).forEach(([key, value]) => {
+            supabaseResponse.headers.set(key, value)
+          })
+        }
       },
     },
   })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const session = await resolveSessionIdentity(supabase)
 
-  if (user?.email && user.id) {
-    requestHeaders.set('x-ops-user-email', user.email.trim().toLowerCase())
-    requestHeaders.set('x-ops-user-id', user.id)
+  if (session) {
+    requestHeaders.set('x-ops-user-email', session.email.toLowerCase())
+    requestHeaders.set('x-ops-user-id', session.id)
   } else {
     requestHeaders.delete('x-ops-user-email')
     requestHeaders.delete('x-ops-user-id')
   }
 
-  const refreshedCookies = supabaseResponse.cookies.getAll()
-  supabaseResponse = next()
-  refreshedCookies.forEach((cookie) => {
-    supabaseResponse.cookies.set(cookie.name, cookie.value, {
-      path: cookie.path,
-      domain: cookie.domain,
-      expires: cookie.expires,
-      maxAge: cookie.maxAge,
-      httpOnly: cookie.httpOnly,
-      secure: cookie.secure,
-      sameSite: cookie.sameSite as 'lax' | 'strict' | 'none' | undefined,
-    })
-  })
+  supabaseResponse = buildNextResponse(requestHeaders, supabaseResponse)
 
   const requestHost = request.headers.get('host')
   const proto = request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol.replace(':', '')
@@ -144,6 +169,7 @@ export async function updateSession(request: NextRequest) {
   const isOpsLogin = pathname === '/ops/login'
   const isOpsMfa = pathname === '/ops/mfa'
   const isOpsLogout = pathname === '/ops/logout'
+  const isOpsConsoleRoute = isOpsRoute && !isOpsLogin && !isOpsMfa && !isOpsLogout
 
   if (isOpsLogin || isOpsMfa) {
     const url = request.nextUrl.clone()
@@ -155,6 +181,13 @@ export async function updateSession(request: NextRequest) {
 
   if (isOpsRoute) {
     supabaseResponse.headers.set('X-Robots-Tag', 'noindex, nofollow')
+  }
+
+  if (isOpsConsoleRoute && !session) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('next', pathname)
+    return redirectWithCookies(url, supabaseResponse)
   }
 
   const isAppRoute =
@@ -171,8 +204,7 @@ export async function updateSession(request: NextRequest) {
 
   const isChangePassword = pathname.startsWith('/change-password')
 
-  // Ops: el gate de auth vive en (console)/layout.tsx, no acá (evita perder sesión al navegar).
-  if (!user && !isPublicMarketing && isAppRoute) {
+  if (!session && !isPublicMarketing && isAppRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     if (!url.searchParams.has('next')) {
@@ -181,18 +213,15 @@ export async function updateSession(request: NextRequest) {
     return redirectWithCookies(url, supabaseResponse)
   }
 
-  // Forzar cambio de contraseña si la cuenta lo requiere (solo app pública, no /ops).
-  const mustChange = Boolean(
-    (user?.user_metadata as Record<string, unknown> | undefined)?.must_change_password
-  )
-  if (user && mustChange && !isChangePassword && !isOpsRoute) {
+  const mustChange = Boolean(session?.userMetadata?.must_change_password)
+  if (session && mustChange && !isChangePassword && !isOpsRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/change-password'
     url.searchParams.set('next', pathname)
     return redirectWithCookies(url, supabaseResponse)
   }
 
-  if (user && isAuthRoute) {
+  if (session && isAuthRoute) {
     const url = request.nextUrl.clone()
     const nextPath = request.nextUrl.searchParams.get('next')
     url.pathname = nextPath && nextPath.startsWith('/') ? nextPath : '/hoy'
@@ -200,7 +229,7 @@ export async function updateSession(request: NextRequest) {
     return redirectWithCookies(url, supabaseResponse)
   }
 
-  if (user && isResetPassword) {
+  if (session && isResetPassword) {
     return supabaseResponse
   }
 

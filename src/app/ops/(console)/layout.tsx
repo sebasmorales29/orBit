@@ -1,3 +1,4 @@
+import { connection } from 'next/server'
 import { headers } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import { assertPlatformAdmin, isOpsAccessTableReady } from '@/lib/platform/admin'
@@ -8,6 +9,7 @@ import { OpsNav } from '@/components/ops/OpsNav'
 import { appShellClass } from '@/components/layout/app-layout'
 
 export default async function OpsConsoleLayout({ children }: { children: React.ReactNode }) {
+  await connection()
   const gate = await assertPlatformAdmin()
   if (!gate.ok) {
     if (gate.reason === 'unauthenticated') {

@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogOut, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -35,31 +34,32 @@ export function OpsNav({
         : 'text-muted hover:bg-surface-hover hover:text-foreground'
     )
 
+  // Navegación con recarga completa: evita perder sesión en requests RSC de Next.js 16.
   return (
     <nav className="flex flex-wrap items-center gap-2 sm:gap-3">
-      <Link href="/ops" className={linkClass('/ops')}>
+      <a href="/ops" className={linkClass('/ops')}>
         Home
-      </Link>
-      <Link href="/ops/inquiries" className={linkClass('/ops/inquiries')}>
+      </a>
+      <a href="/ops/inquiries" className={linkClass('/ops/inquiries')}>
         Contactos
-      </Link>
-      <Link href="/ops/tenants" className={linkClass('/ops/tenants')}>
+      </a>
+      <a href="/ops/tenants" className={linkClass('/ops/tenants')}>
         Tenants
-      </Link>
-      <Link href="/ops/users" className={linkClass('/ops/users')}>
+      </a>
+      <a href="/ops/users" className={linkClass('/ops/users')}>
         Usuarios
-      </Link>
+      </a>
       {isSuper && (
-        <Link href="/ops/access" className={linkClass('/ops/access')}>
+        <a href="/ops/access" className={linkClass('/ops/access')}>
           Acceso
-        </Link>
+        </a>
       )}
       {isSuper && (
-        <Link href="/ops/settings" className={iconClass('/ops/settings')} aria-label="Settings">
+        <a href="/ops/settings" className={iconClass('/ops/settings')} aria-label="Settings">
           <Settings className="h-4.5 w-4.5" strokeWidth={1.8} aria-hidden />
-        </Link>
+        </a>
       )}
-      <Link
+      <a
         href="/ops/logout"
         className={cn(
           'flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-hover hover:text-foreground'
@@ -68,7 +68,7 @@ export function OpsNav({
         title="Cerrar sesión"
       >
         <LogOut className="h-4.5 w-4.5" strokeWidth={1.8} aria-hidden />
-      </Link>
+      </a>
     </nav>
   )
 }
