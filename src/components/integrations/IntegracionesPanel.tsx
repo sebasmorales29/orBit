@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Copy, Check, Plug, Trash2 } from 'lucide-react'
 import { useTranslations } from '@/components/i18n/LocaleProvider'
+import { useAppDialog } from '@/components/ui/app-dialog'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import {
@@ -19,6 +20,7 @@ type Props = {
 
 export function IntegracionesPanel({ connections, webhookUrl }: Props) {
   const { t } = useTranslations()
+  const dialog = useAppDialog()
   const router = useRouter()
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
@@ -40,7 +42,13 @@ export function IntegracionesPanel({ connections, webhookUrl }: Props) {
   }
 
   async function handleRevoke(id: string) {
-    if (!confirm(t('app.integrations.revokeConfirm'))) return
+    const ok = await dialog.confirm({
+      title: t('app.integrations.revoke'),
+      message: t('app.integrations.revokeConfirm'),
+      confirmText: t('app.integrations.revoke'),
+      tone: 'danger',
+    })
+    if (!ok) return
     await revokeIntegrationConnection(id)
     router.refresh()
   }

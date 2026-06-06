@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { EmptyState } from '@/components/app/EmptyState'
 import { useTranslations } from '@/components/i18n/LocaleProvider'
+import { useAppDialog } from '@/components/ui/app-dialog'
 import { useToast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
 
@@ -39,6 +40,7 @@ interface TemplatesClientProps {
 export function TemplatesClient({ organizationId, initialTemplates }: TemplatesClientProps) {
   const { t } = useTranslations()
   const toast = useToast()
+  const dialog = useAppDialog()
   const router = useRouter()
   const [templates, setTemplates] = useState(initialTemplates)
   const [formOpen, setFormOpen] = useState(false)
@@ -141,7 +143,13 @@ export function TemplatesClient({ organizationId, initialTemplates }: TemplatesC
   }
 
   async function handleDelete(template: MessageTemplate) {
-    if (!window.confirm(t('app.templates.deleteConfirm', { name: template.name }))) return
+    const ok = await dialog.confirm({
+      title: t('app.templates.delete'),
+      message: t('app.templates.deleteConfirm', { name: template.name }),
+      confirmText: t('app.templates.delete'),
+      tone: 'danger',
+    })
+    if (!ok) return
 
     setDeletingId(template.id)
     const supabase = createClient()

@@ -6,7 +6,8 @@ interface ConfirmModalProps {
   message: string
   confirmText?: string
   cancelText?: string
-  tone?: 'warning' | 'danger'
+  tone?: 'warning' | 'danger' | 'info'
+  variant?: 'confirm' | 'alert'
   loading?: boolean
   onConfirm: () => void
   onCancel: () => void
@@ -19,6 +20,7 @@ export function ConfirmModal({
   confirmText = 'Confirmar',
   cancelText = 'Cancelar',
   tone = 'warning',
+  variant = 'confirm',
   loading,
   onConfirm,
   onCancel,
@@ -26,12 +28,23 @@ export function ConfirmModal({
   if (!open) return null
 
   const border =
-    tone === 'danger' ? 'border-red-500/40' : 'border-amber-500/45'
-  const bg = tone === 'danger' ? 'bg-red-500/10' : 'bg-amber-500/10'
+    tone === 'danger'
+      ? 'border-red-500/40'
+      : tone === 'info'
+        ? 'border-border'
+        : 'border-amber-500/45'
+  const bg =
+    tone === 'danger'
+      ? 'bg-red-500/10'
+      : tone === 'info'
+        ? 'bg-surface-raised'
+        : 'bg-amber-500/10'
   const titleColor =
     tone === 'danger'
       ? 'text-red-700 dark:text-red-300'
-      : 'text-amber-800 dark:text-amber-300'
+      : tone === 'info'
+        ? 'text-foreground'
+        : 'text-amber-800 dark:text-amber-300'
 
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center px-4">
@@ -52,19 +65,21 @@ export function ConfirmModal({
         </div>
 
         <div className="mt-4 flex gap-2">
-          <Button
-            type="button"
-            variant="secondary"
-            className="flex-1"
-            onClick={onCancel}
-            disabled={loading}
-          >
-            {cancelText}
-          </Button>
+          {variant === 'confirm' && (
+            <Button
+              type="button"
+              variant="secondary"
+              className="flex-1"
+              onClick={onCancel}
+              disabled={loading}
+            >
+              {cancelText}
+            </Button>
+          )}
           <Button
             type="button"
             variant={tone === 'danger' ? 'danger' : 'primary'}
-            className="flex-1"
+            className={variant === 'alert' ? 'w-full' : 'flex-1'}
             onClick={onConfirm}
             loading={loading}
           >

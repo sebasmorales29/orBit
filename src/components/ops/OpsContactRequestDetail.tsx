@@ -12,6 +12,7 @@ import {
   opsUpdateContactRequestStatus,
 } from '@/lib/platform/actions'
 import type { ContactRequestRow, ContactRequestStatus } from '@/lib/platform/contact-requests'
+import { useAppDialog } from '@/components/ui/app-dialog'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/toast'
 
@@ -26,6 +27,7 @@ const STATUS_LABELS: Record<ContactRequestStatus, string> = {
 export function OpsContactRequestDetail({ request }: { request: ContactRequestRow }) {
   const router = useRouter()
   const toast = useToast()
+  const dialog = useAppDialog()
   const [status, setStatus] = useState(request.status)
   const [notes, setNotes] = useState(request.ops_notes ?? '')
   const [subject, setSubject] = useState(`orBit — seguimiento a tu solicitud`)
@@ -77,7 +79,13 @@ export function OpsContactRequestDetail({ request }: { request: ContactRequestRo
   }
 
   async function archive() {
-    if (!confirm('¿Archivar esta solicitud? Seguirá en métricas pero saldrá de la lista activa.')) return
+    const ok = await dialog.confirm({
+      title: 'Archivar solicitud',
+      message: '¿Archivar esta solicitud? Seguirá en métricas pero saldrá de la lista activa.',
+      confirmText: 'Archivar',
+      tone: 'warning',
+    })
+    if (!ok) return
     setBusy('archive')
     const result = await opsArchiveContactRequest(request.id)
     setBusy(null)
@@ -90,7 +98,13 @@ export function OpsContactRequestDetail({ request }: { request: ContactRequestRo
   }
 
   async function remove() {
-    if (!confirm('¿Eliminar permanentemente esta solicitud? No se puede deshacer.')) return
+    const ok = await dialog.confirm({
+      title: 'Eliminar solicitud',
+      message: '¿Eliminar permanentemente esta solicitud? No se puede deshacer.',
+      confirmText: 'Eliminar',
+      tone: 'danger',
+    })
+    if (!ok) return
     setBusy('delete')
     const result = await opsDeleteContactRequest(request.id)
     setBusy(null)

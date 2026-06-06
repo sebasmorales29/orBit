@@ -36,6 +36,7 @@ import {
 import type { DashboardVisibility } from '@/lib/dashboard/tenant-dashboards'
 import type { DashboardLayoutV2, DashboardWidgetId, GridSpan } from '@/lib/dashboard/types'
 import { useTranslations } from '@/components/i18n/LocaleProvider'
+import { useAppDialog } from '@/components/ui/app-dialog'
 import { cn } from '@/lib/utils'
 import {
   buildExportBundle,
@@ -92,6 +93,7 @@ export function DashboardStudio({
   saving,
 }: DashboardStudioProps) {
   const { t } = useTranslations()
+  const dialog = useAppDialog()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selection, setSelection] = useState<StudioSelection>(null)
   const [paletteQuery, setPaletteQuery] = useState('')
@@ -232,13 +234,21 @@ export function DashboardStudio({
                 const raw = await readJsonFile(file)
                 const result = parseImportBundle(raw, usesStock)
                 if (!result.ok) {
-                  alert(t(`app.dashboard.importErrors.${result.error}`))
+                  await dialog.alert({
+                    title: t('app.dashboard.import'),
+                    message: t(`app.dashboard.importErrors.${result.error}`),
+                    tone: 'danger',
+                  })
                   return
                 }
                 onChange(result.layout)
                 if (result.name) onExportNameChange(result.name)
               } catch {
-                alert(t('app.dashboard.importErrors.invalid_json'))
+                await dialog.alert({
+                  title: t('app.dashboard.import'),
+                  message: t('app.dashboard.importErrors.invalid_json'),
+                  tone: 'danger',
+                })
               }
               e.target.value = ''
             }}

@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { TenantPickerModal, type TenantPickerOrg } from '@/components/app/TenantPickerModal'
+import { useAppDialog } from '@/components/ui/app-dialog'
 import { setActiveOrganizationId } from '@/lib/org-actions'
 
 export type { TenantPickerOrg }
@@ -15,6 +16,7 @@ export function TenantPickerGate({
   activeOrgId: string | null
 }) {
   const router = useRouter()
+  const dialog = useAppDialog()
   const [saving, setSaving] = useState(false)
 
   const shouldPick = useMemo(() => {
@@ -31,7 +33,7 @@ export function TenantPickerGate({
       router.refresh()
     } else {
       setSaving(false)
-      alert(res.message)
+      await dialog.alert({ title: 'No se pudo cambiar de tenant', message: res.message, tone: 'danger' })
     }
   }
 
