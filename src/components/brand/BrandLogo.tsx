@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { BRAND_NAME } from '@/lib/brand'
 import { cn } from '@/lib/utils'
 
 const LOGO_SRC = '/brand/logo-icon-light.png'
@@ -55,7 +56,7 @@ export function BrandLogo({
 
   if (href) {
     return (
-      <Link href={href} className={wrapClass} onClick={onClick} aria-label="orBit">
+      <Link href={href} className={wrapClass} onClick={onClick} aria-label={BRAND_NAME}>
         {image}
       </Link>
     )

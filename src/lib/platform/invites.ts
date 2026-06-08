@@ -185,9 +185,9 @@ export async function inviteUserToTenant(input: {
     return { ok: false, code: 'FAILED', message: msg }
   }
 
-  const subject = `orBit — Invitación a ${input.organizationName}`
+  const subject = `Velum — Invitación a ${input.organizationName}`
   const lines = [
-    `Te invitaron a un tenant de orBit: ${input.organizationName}`,
+    `Te invitaron a un tenant de Velum: ${input.organizationName}`,
     ``,
     `Invitado por: ${input.inviterName} <${input.inviterEmail}>`,
     ``,
@@ -201,7 +201,7 @@ export async function inviteUserToTenant(input: {
   if (tempPassword) {
     lines.push(
       `Tu contraseña temporal: ${tempPassword}`,
-      `Al iniciar sesión, orBit te va a pedir cambiarla por una tuya.`,
+      `Al iniciar sesión, Velum te va a pedir cambiarla por una tuya.`,
       ``
     )
   } else {

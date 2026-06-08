@@ -130,7 +130,7 @@ export async function createTilopayRedirectCheckout(
   const amount = input.lineItem.amountCents / 100
   const nameParts = input.businessName.trim().split(/\s+/)
   const firstName = nameParts[0] ?? 'Cliente'
-  const lastName = nameParts.slice(1).join(' ') || 'orBit'
+  const lastName = nameParts.slice(1).join(' ') || 'Velum'
 
   const payload = {
     redirect: input.successUrl,
@@ -144,10 +144,10 @@ export async function createTilopayRedirectCheckout(
     orderNumber: checkoutId,
     capture: 1,
     subscription: 1,
-    platform: 'orbit-saas',
+    platform: 'velum-saas',
     lang: 'es',
     hashVersion: 'V2',
-    returnData: 'orbit',
+    returnData: 'velum',
   }
 
   const res = await fetch(`${TPAY_API_BASE}/processPayment`, {
@@ -237,7 +237,7 @@ export async function processTilopayRecurrentPayment(input: {
     orderNumber: input.orderNumber,
     capture: 1,
     hashVersion: 'V2',
-    callFrom: 'orbit-saas-renewal',
+    callFrom: 'velum-saas-renewal',
     language: 'es',
   }
 

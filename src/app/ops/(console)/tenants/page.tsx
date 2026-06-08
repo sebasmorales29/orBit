@@ -42,7 +42,7 @@ export default async function OpsTenantsPage({
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Tenants</h1>
           <p className="mt-1 text-[14px] text-muted">
-            Negocios aprovisionados en orBit. Cada fila es una organización aislada.
+            Negocios aprovisionados en Velum. Cada fila es una organización aislada.
           </p>
           {filterLabel && (
             <p className="mt-2 text-[13px] text-accent">

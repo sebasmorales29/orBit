@@ -1,14 +1,15 @@
 import { cache } from 'react'
+import { readBrandEnv } from '@/lib/brand-env'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { resolveOpsAccess } from '@/lib/platform/ops-access'
 import { getSessionActor } from '@/lib/platform/session-actor'
 
-/** Super administrador único (dueño de orBit). Solo este correo gestiona accesos /ops. */
+/** Super administrador único (dueño de Velum). Solo este correo gestiona accesos /ops. */
 export function getSuperAdminEmail(): string | null {
-  const superRaw = process.env.ORBIT_PLATFORM_SUPER_ADMIN_EMAIL?.trim().toLowerCase()
+  const superRaw = readBrandEnv('PLATFORM_SUPER_ADMIN_EMAIL')?.toLowerCase()
   if (superRaw) return superRaw
 
-  const legacy = process.env.ORBIT_PLATFORM_ADMIN_EMAILS ?? ''
+  const legacy = readBrandEnv('PLATFORM_ADMIN_EMAILS') ?? process.env.VELUM_PLATFORM_ADMIN_EMAILS ?? ''
   const first = legacy
     .split(',')
     .map((e) => e.trim().toLowerCase())

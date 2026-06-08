@@ -146,7 +146,7 @@ export function InviteLoginForm({ email, token }: { email: string; token: string
       </div>
       <p className="text-[12px] text-muted">
         Si es tu primera vez, usá la <span className="text-foreground">contraseña temporal</span> del correo. Al entrar,
-        orBit te pedirá cambiarla.
+        Velum te pedirá cambiarla.
       </p>
       <Button type="submit" className="w-full py-3" loading={loading}>
         Entrar

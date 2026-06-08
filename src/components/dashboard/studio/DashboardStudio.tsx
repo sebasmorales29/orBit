@@ -45,8 +45,8 @@ import {
   readJsonFile,
 } from '@/lib/dashboard/export'
 
-const DND_WIDGET = 'application/x-orbit-widget'
-const DND_CELL = 'application/x-orbit-cell'
+const DND_WIDGET = 'application/x-velum-widget'
+const DND_CELL = 'application/x-velum-cell'
 
 const STUDIO_BG = 'bg-[#0a0e14]'
 const PANEL = 'border-[#2a3f5f] bg-[#111820]'

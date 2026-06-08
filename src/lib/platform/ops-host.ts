@@ -1,6 +1,8 @@
-/** Host dedicado para la consola /ops (ej. ops.orbit-one-mu.vercel.app). */
+import { readBrandEnv } from '@/lib/brand-env'
+
+/** Host dedicado para la consola /ops (ej. ops.tudominio.com). */
 export function getOpsHost(): string | null {
-  const raw = process.env.ORBIT_OPS_HOST?.trim()
+  const raw = readBrandEnv('OPS_HOST')
   if (!raw) return null
   return raw
     .replace(/^https?:\/\//i, '')
@@ -35,7 +37,7 @@ export function normalizeHost(host: string | null | undefined): string {
 
 /**
  * Vercel Hobby no permite agregar ops.<proyecto>.vercel.app como dominio extra.
- * Si ORBIT_OPS_HOST usa ese patrón, ignoramos el split para no romper /ops.
+ * Si VELUM_OPS_HOST usa ese patrón, ignoramos el split para no romper /ops.
  */
 export function isUnsupportedVercelOpsSubdomain(): boolean {
   const ops = getOpsHost()
@@ -45,7 +47,7 @@ export function isUnsupportedVercelOpsSubdomain(): boolean {
   return ops === `ops.${pub}` || ops.endsWith(`.${pub}`)
 }
 
-/** true cuando ORBIT_OPS_HOST y NEXT_PUBLIC_APP_URL apuntan a hosts distintos y son válidos. */
+/** true cuando VELUM_OPS_HOST y NEXT_PUBLIC_APP_URL apuntan a hosts distintos y son válidos. */
 export function hostSplitEnabled(): boolean {
   const ops = getOpsHost()
   const pub = getPublicAppHost()

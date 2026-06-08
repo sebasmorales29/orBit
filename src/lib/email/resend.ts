@@ -1,3 +1,5 @@
+import { readBrandEnv } from '@/lib/brand-env'
+
 type SendEmailResult = { ok: true } | { ok: false; message: string }
 
 export async function sendEmailResend(input: {
@@ -6,13 +8,13 @@ export async function sendEmailResend(input: {
   text: string
 }): Promise<SendEmailResult> {
   const apiKey = process.env.RESEND_API_KEY?.trim()
-  const from = process.env.ORBIT_PLATFORM_EMAIL_FROM?.trim()
+  const from = readBrandEnv('PLATFORM_EMAIL_FROM')
 
   if (!apiKey) {
     return { ok: false, message: 'Falta RESEND_API_KEY en el servidor.' }
   }
   if (!from) {
-    return { ok: false, message: 'Falta ORBIT_PLATFORM_EMAIL_FROM en el servidor.' }
+    return { ok: false, message: 'Falta VELUM_PLATFORM_EMAIL_FROM en el servidor.' }
   }
 
   const res = await fetch('https://api.resend.com/emails', {

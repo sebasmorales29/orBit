@@ -91,7 +91,7 @@ export async function provisionTenant(
       return {
         ok: false,
         code: 'ADMIN_NOT_CONFIGURED',
-        message: 'Configurá ORBIT_PLATFORM_ADMIN_EMAILS en el servidor.',
+        message: 'Configurá VELUM_PLATFORM_ADMIN_EMAILS en el servidor.',
       }
     }
     return {
@@ -171,7 +171,7 @@ export async function provisionTenant(
     return {
       ok: false,
       code: 'USER_HAS_ORG',
-      message: 'Ese correo ya pertenece a un negocio en orBit. Usá otro owner o ampliá el plan multi-org.',
+      message: 'Ese correo ya pertenece a un negocio en Velum. Usá otro owner o ampliá el plan multi-org.',
     }
   }
 
@@ -357,7 +357,7 @@ export async function listProvisionedTenants(): Promise<TenantListResult> {
       return {
         ok: false,
         code: 'ADMIN_NOT_CONFIGURED',
-        message: 'Configurá ORBIT_PLATFORM_ADMIN_EMAILS en el servidor.',
+        message: 'Configurá VELUM_PLATFORM_ADMIN_EMAILS en el servidor.',
       }
     }
     return {

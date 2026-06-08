@@ -6,7 +6,7 @@ import { AppDialogProvider } from '@/components/ui/app-dialog'
 import { ToastProvider } from '@/components/ui/toast'
 import { BRAND_NAME } from '@/lib/brand'
 import { cookies } from 'next/headers'
-import { DEFAULT_LOCALE, isLocale, LOCALE_STORAGE_KEY } from '@/i18n'
+import { DEFAULT_LOCALE, isLocale, LOCALE_STORAGE_KEY, LOCALE_STORAGE_KEY_LEGACY } from '@/i18n'
 import './globals.css'
 
 const inter = Inter({
@@ -17,7 +17,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: BRAND_NAME,
   description:
-    'CRM operativo para PYMEs: consultas, ventas, inventario, cobros, ganancia e integraciones. Hecho en Costa Rica.',
+    'Velum — CRM operativo para PYMEs. Capa fina que ordena consultas, ventas, inventario y cobros. Hecho en Costa Rica.',
 }
 
 export const viewport: Viewport = {
@@ -33,7 +33,7 @@ export const viewport: Viewport = {
 const localeScript = `
 (function () {
   try {
-    var k = 'orbit-locale';
+    var k = 'velum-locale';
     var l = localStorage.getItem(k);
     if (l === 'es' || l === 'en') document.documentElement.lang = l;
   } catch (e) {}
@@ -43,7 +43,7 @@ const localeScript = `
 const themeScript = `
 (function () {
   try {
-    var k = 'orbit-theme';
+    var k = 'velum-theme';
     var t = localStorage.getItem(k) || 'system';
     var d = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     document.documentElement.classList.toggle('dark', d);
@@ -58,7 +58,9 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const cookieStore = await cookies()
-  const cookieLocale = cookieStore.get(LOCALE_STORAGE_KEY)?.value
+  const cookieLocale =
+    cookieStore.get(LOCALE_STORAGE_KEY)?.value ??
+    cookieStore.get(LOCALE_STORAGE_KEY_LEGACY)?.value
   const initialLocale = isLocale(cookieLocale) ? cookieLocale : DEFAULT_LOCALE
 
   return (

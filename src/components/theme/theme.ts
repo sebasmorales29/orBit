@@ -1,6 +1,7 @@
 export type Theme = 'light' | 'dark' | 'system'
 
-export const THEME_STORAGE_KEY = 'orbit-theme'
+export const THEME_STORAGE_KEY = 'velum-theme'
+export const THEME_STORAGE_KEY_LEGACY = 'orbit-theme'
 
 export function getSystemTheme(): 'light' | 'dark' {
   if (typeof window === 'undefined') return 'light'

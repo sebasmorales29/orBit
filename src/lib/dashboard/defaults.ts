@@ -13,5 +13,5 @@ export function mergeDashboardLayout(saved: unknown, usesStock: boolean): Dashbo
 }
 
 export function storageKey(orgId: string, userId: string) {
-  return `orbit-dashboard-v2:${orgId}:${userId}`
+  return `velum-dashboard-v2:${orgId}:${userId}`
 }

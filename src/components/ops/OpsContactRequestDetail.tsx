@@ -30,7 +30,7 @@ export function OpsContactRequestDetail({ request }: { request: ContactRequestRo
   const dialog = useAppDialog()
   const [status, setStatus] = useState(request.status)
   const [notes, setNotes] = useState(request.ops_notes ?? '')
-  const [subject, setSubject] = useState(`orBit — seguimiento a tu solicitud`)
+  const [subject, setSubject] = useState(`Velum — seguimiento a tu solicitud`)
   const [emailBody, setEmailBody] = useState(
     `Hola ${request.full_name.split(' ')[0] ?? request.full_name},\n\nGracias por escribirnos. `
   )
@@ -246,7 +246,7 @@ export function OpsContactRequestDetail({ request }: { request: ContactRequestRo
       </section>
 
       <section className="rounded-2xl border border-border bg-surface p-6 space-y-4">
-        <h2 className="text-[15px] font-semibold text-foreground">Enviar correo desde orBit</h2>
+        <h2 className="text-[15px] font-semibold text-foreground">Enviar correo desde Velum</h2>
         <p className="text-[13px] text-muted">
           Usa Resend (si está configurado). Al enviar, marcamos contacto y actualizamos métricas.
         </p>

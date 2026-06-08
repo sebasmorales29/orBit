@@ -14,6 +14,7 @@ import {
   getMessages,
   isLocale,
   LOCALE_STORAGE_KEY,
+  LOCALE_STORAGE_KEY_LEGACY,
   translate,
   type Locale,
 } from '@/i18n'
@@ -47,7 +48,8 @@ export function LocaleProviderInner({
 
   useEffect(() => {
     // Si el servidor ya nos dio un locale inicial, lo respetamos.
-    const stored = localStorage.getItem(LOCALE_STORAGE_KEY)
+    const stored =
+      localStorage.getItem(LOCALE_STORAGE_KEY) ?? localStorage.getItem(LOCALE_STORAGE_KEY_LEGACY)
     const fromStorage = isLocale(stored) ? stored : null
     const next = fromStorage ?? initialLocale ?? DEFAULT_LOCALE
     setLocaleState(next)

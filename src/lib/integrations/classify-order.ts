@@ -40,7 +40,7 @@ export function classifyInboundOrder(
   }
 
   const source = payload.source ?? 'connect'
-  const notesSuffix = ` · orBit Connect (${source})`
+  const notesSuffix = ` · Velum Connect (${source})`
 
   return {
     orderStatus,

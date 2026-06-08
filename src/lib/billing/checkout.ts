@@ -12,7 +12,12 @@ function appUrl(): string {
 }
 
 function billingSecret(): string {
-  return process.env.ORBIT_BILLING_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'orbit-dev-billing'
+  return (
+    process.env.VELUM_BILLING_SECRET ??
+    process.env.ORBIT_BILLING_SECRET ??
+    process.env.SUPABASE_SERVICE_ROLE_KEY ??
+    'velum-dev-billing'
+  )
 }
 
 export function signCheckoutToken(payload: {
@@ -54,7 +59,11 @@ export function verifyCheckoutToken(token: string): {
 }
 
 function resolveProvider(): BillingProviderId {
-  const forced = process.env.ORBIT_BILLING_PROVIDER?.trim().toLowerCase()
+  const forced = (
+    process.env.VELUM_BILLING_PROVIDER ?? process.env.ORBIT_BILLING_PROVIDER
+  )
+    ?.trim()
+    .toLowerCase()
   if (forced === 'simulated') return 'simulated'
   if (forced === 'tilopay' && isTilopayConfigured()) return 'tilopay'
   if (forced === 'onvo' && process.env.ONVO_SECRET_KEY?.trim()) return 'onvo'
@@ -81,7 +90,7 @@ async function createOnvoCheckout(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      title: `orBit — ${input.lineItem.planName}`,
+      title: `Velum — ${input.lineItem.planName}`,
       description: input.lineItem.description,
       currency: 'USD',
       amount,

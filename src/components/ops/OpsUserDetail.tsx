@@ -70,7 +70,7 @@ export function OpsUserDetail({
     <div className="mx-auto max-w-5xl space-y-6">
       <OpsSuperAdminConfirmModal
         open={confirm?.type === 'delete'}
-        title="orBit Platform — Eliminar usuario"
+        title="Velum Platform — Eliminar usuario"
         message={`Vas a eliminar la cuenta ${user.email ?? user.id}. Esta acción no se puede deshacer.`}
         confirmText="Eliminar usuario"
         tone="danger"
@@ -104,7 +104,7 @@ export function OpsUserDetail({
       />
       <OpsSuperAdminConfirmModal
         open={confirm?.type === 'deactivate'}
-        title="orBit Platform — Desactivar usuario"
+        title="Velum Platform — Desactivar usuario"
         message={`Vas a desactivar la cuenta ${user.email ?? user.id}. No podrá iniciar sesión ni operar.`}
         confirmText="Desactivar"
         tone="warning"
@@ -139,7 +139,7 @@ export function OpsUserDetail({
       />
       <OpsSuperAdminConfirmModal
         open={confirm?.type === 'reactivate'}
-        title="orBit Platform — Reactivar usuario"
+        title="Velum Platform — Reactivar usuario"
         message={`Vas a reactivar la cuenta ${user.email ?? user.id}. Podrá iniciar sesión.`}
         confirmText="Reactivar"
         tone="warning"
@@ -174,8 +174,8 @@ export function OpsUserDetail({
       />
       <OpsSuperAdminConfirmModal
         open={confirm?.type === 'assign'}
-        title="orBit Platform — Asignar tenant y rol"
-        message={`Vas a asignar esta cuenta a un tenant con su rol. Esto cambia sus permisos dentro de orBit.`}
+        title="Velum Platform — Asignar tenant y rol"
+        message={`Vas a asignar esta cuenta a un tenant con su rol. Esto cambia sus permisos dentro de Velum.`}
         confirmText="Aplicar asignación"
         tone="warning"
         loading={busy}

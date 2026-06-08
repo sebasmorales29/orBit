@@ -55,7 +55,7 @@ export async function OpsConfigNotice() {
           <li className="rounded-xl border border-border bg-surface-raised p-4">
             <p className="font-medium">Falta el super administrador</p>
             <pre className="mt-2 rounded-lg bg-surface p-3 text-[12px] text-muted">
-              ORBIT_PLATFORM_SUPER_ADMIN_EMAIL=tu-correo@ejemplo.com
+              VELUM_PLATFORM_SUPER_ADMIN_EMAIL=tu-correo@ejemplo.com
             </pre>
             <p className="mt-2 text-[12px] text-muted">
               Solo este correo puede gestionar accesos y MFA en /ops/access.
@@ -78,7 +78,7 @@ export async function OpsConfigNotice() {
 
       {isUnsupportedVercelOpsSubdomain() && (
         <p className="rounded-xl border border-amber-500/35 bg-amber-500/10 p-3 text-[12px] text-muted">
-          <strong className="text-foreground">ORBIT_OPS_HOST={getOpsHost()}</strong> no funciona en
+          <strong className="text-foreground">VELUM_OPS_HOST={getOpsHost()}</strong> no funciona en
           Vercel Hobby (no podés agregar <code>ops.*.vercel.app</code>). Borrá esa variable o usá un
           dominio propio (ej. <code>ops.tudominio.com</code>). Mientras tanto, usá{' '}
           <code>/ops</code> en el dominio principal.

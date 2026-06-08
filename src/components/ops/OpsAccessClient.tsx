@@ -66,7 +66,7 @@ export function OpsAccessClient({ admins }: { admins: OpsAdminRow[] }) {
       <OpsAccessAdminDetailModal admin={detailAdmin} onClose={() => setDetailAdmin(null)} />
       <OpsSuperAdminConfirmModal
         open={Boolean(superAction)}
-        title="orBit Platform — Seguridad reforzada"
+        title="Velum Platform — Seguridad reforzada"
         message="Vas a aplicar un cambio sensible en Operaciones. Confirmá con MFA y con el código enviado a tu correo."
         confirmText="Confirmar"
         tone="danger"

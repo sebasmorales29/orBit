@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import type { Organization } from '@/types/database'
 import { cookies } from 'next/headers'
 
-export const ACTIVE_ORG_COOKIE = 'orbit_org_id'
+export const ACTIVE_ORG_COOKIE = 'velum_org_id'
+export const ACTIVE_ORG_COOKIE_LEGACY = 'orbit_org_id'
 
 export async function getCurrentOrganization(): Promise<Organization | null> {
   const supabase = await createClient()
@@ -12,7 +13,10 @@ export async function getCurrentOrganization(): Promise<Organization | null> {
   if (!user) return null
 
   const cookieStore = await cookies()
-  const activeOrgId = cookieStore.get(ACTIVE_ORG_COOKIE)?.value ?? null
+  const activeOrgId =
+    cookieStore.get(ACTIVE_ORG_COOKIE)?.value ??
+    cookieStore.get(ACTIVE_ORG_COOKIE_LEGACY)?.value ??
+    null
 
   const query = supabase
     .from('organization_members')

@@ -57,7 +57,7 @@ const es = {
       paymentError: 'No se pudo completar el pago. Intentá de nuevo.',
       paymentCanceled: 'Pago cancelado. Tu plan actual sigue igual.',
       changeError: 'No pudimos procesar el cambio.',
-      pastDue: 'Tu último cobro falló. Actualizá tu tarjeta o pagá ahora para seguir usando orBit.',
+      pastDue: 'Tu último cobro falló. Actualizá tu tarjeta o pagá ahora para seguir usando Velum.',
       history: 'Historial reciente',
       event: {
         activation: 'Activación',
@@ -120,7 +120,7 @@ const es = {
       body1:
         '{brand} concentra consultas, ventas, inventario y cobros en un solo flujo — para quien vende por WhatsApp, redes y tienda sin vivir en planillas ni cinco apps distintas.',
       body2:
-        'Onboarding por rubro, panel Hoy personalizable, métricas con ganancia estimada, asistente del día y orBit Connect para pedidos de tu tienda online.',
+        'Onboarding por rubro, panel Hoy personalizable, métricas con ganancia estimada, asistente del día y Velum Connect para pedidos de tu tienda online.',
       ctaTrial: 'Probar 14 días gratis',
       ctaContact: 'Solicitar demo',
       ctaPricing: 'Ver planes',
@@ -128,7 +128,7 @@ const es = {
       footnoteContact: 'Te respondemos para coordinar demo o información · Sin registro público',
     },
     cta: {
-      title: 'Empezá hoy con tu negocio en orBit',
+      title: 'Empezá hoy con tu negocio en Velum',
       body: 'Creá tu cuenta en minutos, configurá tu tenant y probá 14 días con todo incluido. Si ya tenés cuenta, entrá directo a tu panel.',
       createAccount: 'Crear cuenta',
       haveAccount: 'Iniciar sesión',
@@ -147,7 +147,7 @@ const es = {
       label: 'Producto',
       title: 'Todo lo operativo, en un solo sistema.',
       intro:
-        'orBit no es un CRM corporativo. Está pensado para emprendimientos y PYMEs en Costa Rica y LATAM que venden por canales digitales y necesitan claridad hoy, no un ERP de meses.',
+        'Velum no es un CRM corporativo. Está pensado para emprendimientos y PYMEs en Costa Rica y LATAM que venden por canales digitales y necesitan claridad hoy, no un ERP de meses.',
       items: [
         {
           title: 'Hoy',
@@ -175,7 +175,7 @@ const es = {
             'Ingresos cobrados, pendientes por cobrar, ganancia estimada del mes y gráfico de las últimas 6 semanas. En colones o dólares.',
         },
         {
-          title: 'orBit Connect',
+          title: 'Velum Connect',
           description:
             'Conectá tu tienda online o automatización: los pedidos entran solos por API, clasificados según tu rubro y sin duplicar a mano.',
         },
@@ -192,7 +192,7 @@ const es = {
         'Consultas activas, ventas del día y productos con stock. Plantillas para responder y cerrar más rápido.',
       step3Title: 'Conectá lo externo',
       step3Body:
-        'Con orBit Connect, pedidos de tu e-commerce llegan por webhook. Opcional si vendés solo por chat.',
+        'Con Velum Connect, pedidos de tu e-commerce llegan por webhook. Opcional si vendés solo por chat.',
       step4Title: 'Operá desde Hoy',
       step4Body:
         'Cada mañana: prioridades claras, métricas al día y la siguiente acción con contexto — desde el celular o la compu.',
@@ -237,7 +237,7 @@ const es = {
             'Todo lo de Operativo',
             'Asistente IA en el panel Hoy',
             'Ganancia estimada y gráficos semanales',
-            'orBit Connect (pedidos automáticos)',
+            'Velum Connect (pedidos automáticos)',
             'Hasta 5 usuarios · plantillas y rubro',
           ],
         },
@@ -262,15 +262,15 @@ const es = {
       q1: '¿Qué es {brand}?',
       a1: 'Un CRM operativo para PYMEs: consultas, ventas con detalle, clientes, inventario, cobros, métricas con ganancia y panel Hoy. Pensado para quien vende por WhatsApp, redes y tienda en Costa Rica y LATAM.',
       q2: '¿Cuántos planes existen?',
-      a2: 'Tres: Operativo, Profesional (el más elegido) y Equipo. Cada uno incluye lo esencial para su tamaño; el Profesional suma IA, ganancia estimada y orBit Connect. Elegís ciclo mensual, semestral o anual — en la demo te ayudamos a elegir sin pagar de más.',
+      a2: 'Tres: Operativo, Profesional (el más elegido) y Equipo. Cada uno incluye lo esencial para su tamaño; el Profesional suma IA, ganancia estimada y Velum Connect. Elegís ciclo mensual, semestral o anual — en la demo te ayudamos a elegir sin pagar de más.',
       q3: '¿Cuánto tarda empezar?',
       a3: 'La mayoría opera el mismo día: cuenta, onboarding de rubro, productos si aplica, y primeras consultas o ventas. Sin consultor ni implementación técnica larga.',
       q4: '¿Funciona en celular?',
       a4: 'Sí. La interfaz está pensada para el teléfono, donde muchos equipos revisan consultas, ventas y cobros durante el día.',
       q5: '¿Puedo cancelar cuando quiera?',
       a5: 'Sí. El plan mensual no exige contrato largo. La prueba de 14 días es sin tarjeta.',
-      q6: '¿Qué es orBit Connect?',
-      a6: 'Una API para enviar pedidos desde tu tienda online, marketplace o automatización (POST con clave). orBit clasifica el pedido según tu rubro y evita duplicados.',
+      q6: '¿Qué es Velum Connect?',
+      a6: 'Una API para enviar pedidos desde tu tienda online, marketplace o automatización (POST con clave). Velum clasifica el pedido según tu rubro y evita duplicados.',
       q7: '¿Para qué negocios sirve?',
       a7: 'Emprendimientos y PYMEs con productos o servicios: belleza, alimentos, barbería, perfumes, bisutería, ropa, retail, artesanías y servicios profesionales, entre otros.',
     },
@@ -309,11 +309,11 @@ const es = {
       successTitle: '¡Gracias!',
       successBody:
         'Recibimos tu solicitud. En breve te escribimos para coordinar demo o resolver tus dudas.',
-      error: 'No se pudo enviar. Intentá de nuevo o escribinos a hola@orbit.cr',
+      error: 'No se pudo enviar. Intentá de nuevo o escribinos a noreply@orbitplatform.net',
     },
     footer: {
-      tagline: 'CRM operativo para PYMEs · Hecho en Costa Rica',
-      contact: 'hola@orbit.cr',
+      tagline: 'Capa fina que ordena el caos · CRM para PYMEs · Costa Rica',
+      contact: 'noreply@orbitplatform.net',
     },
   },
   auth: {
@@ -350,7 +350,7 @@ const es = {
       ruleSymbol: 'Un símbolo (!@#$…)',
       trial1: 'Ventas, consultas, clientes e inventario',
       trial2: 'Panel Hoy personalizable y métricas con ganancia',
-      trial3: 'orBit Connect y asistente IA en la prueba',
+      trial3: 'Velum Connect y asistente IA en la prueba',
       termsPrefix: 'Acepto los',
       termsLink: 'Términos de servicio',
       termsAnd: 'y la',
@@ -399,14 +399,14 @@ const es = {
   legal: {
     back: 'Inicio',
     contact:
-      'Consultas sobre estos documentos: escribinos a hola@orbit.cr. Este texto es informativo; para asesoría legal formal consultá a un profesional en Costa Rica.',
+      'Consultas sobre estos documentos: escribinos a noreply@orbitplatform.net. Este texto es informativo; para asesoría legal formal consultá a un profesional en Costa Rica.',
     terms: {
       title: 'Términos de servicio',
       updated: 'Última actualización: 30 de mayo de 2026',
       sections: [
         {
           title: '1. Quiénes somos',
-          body: 'orBit es un software CRM ofrecido por Sebastián Morales / orBit, operado desde Costa Rica, para emprendimientos que venden por WhatsApp y canales digitales en LATAM.',
+          body: 'Velum es un software CRM ofrecido por Sebastián Morales / Velum, operado desde Costa Rica, para emprendimientos que venden por WhatsApp y canales digitales en LATAM.',
         },
         {
           title: '2. Aceptación',
@@ -414,7 +414,7 @@ const es = {
         },
         {
           title: '3. Cuenta y uso',
-          body: 'Sos responsable de la información de tu cuenta, de mantener tu contraseña segura y del uso que hagas de orBit en tu negocio. No podés usar el servicio para actividades ilegales, spam o contenido que viole derechos de terceros.',
+          body: 'Sos responsable de la información de tu cuenta, de mantener tu contraseña segura y del uso que hagas de Velum en tu negocio. No podés usar el servicio para actividades ilegales, spam o contenido que viole derechos de terceros.',
         },
         {
           title: '4. Prueba y suscripción',
@@ -430,7 +430,7 @@ const es = {
         },
         {
           title: '7. Limitación de responsabilidad',
-          body: 'orBit se ofrece “tal cual”. En la medida permitida por la ley aplicable, no somos responsables por pérdidas indirectas, lucro cesante o decisiones comerciales basadas en el uso del CRM.',
+          body: 'Velum se ofrece “tal cual”. En la medida permitida por la ley aplicable, no somos responsables por pérdidas indirectas, lucro cesante o decisiones comerciales basadas en el uso del CRM.',
         },
         {
           title: '8. Terminación',
@@ -448,7 +448,7 @@ const es = {
       sections: [
         {
           title: '1. Responsable',
-          body: 'orBit (Costa Rica) es responsable del tratamiento de los datos personales que nos proporcionás al registrarte y usar la plataforma.',
+          body: 'Velum (Costa Rica) es responsable del tratamiento de los datos personales que nos proporcionás al registrarte y usar la plataforma.',
         },
         {
           title: '2. Datos que recopilamos',
@@ -476,7 +476,7 @@ const es = {
         },
         {
           title: '8. Tus derechos',
-          body: 'Podés acceder, rectificar o solicitar la eliminación de tus datos escribiendo a hola@orbit.cr. También podés retirar el consentimiento cuando el tratamiento se base en él.',
+          body: 'Podés acceder, rectificar o solicitar la eliminación de tus datos escribiendo a noreply@orbitplatform.net. También podés retirar el consentimiento cuando el tratamiento se base en él.',
         },
         {
           title: '9. Cambios',
@@ -490,7 +490,7 @@ const es = {
     step1Eyebrow: 'Empezamos por vos',
     step1Title: '¿Cómo te gusta que te llamemos?',
     step1Subtitle:
-      'Esto no es un formulario más. Queremos que desde el primer día sientas que orBit es tuyo, hecho para tu ritmo y tu tranquilidad.',
+      'Esto no es un formulario más. Queremos que desde el primer día sientas que Velum es tuyo, hecho para tu ritmo y tu tranquilidad.',
     step1Affirmation:
       'Tu tiempo vale oro. Acá no hay pasos innecesarios: solo lo que nos ayuda a cuidarte mejor cada mañana.',
     preferredName: 'Tu nombre',
@@ -505,7 +505,7 @@ const es = {
       businessType: 'Contanos tu rubro',
       channel: '¿Por dónde más vendés?',
       challenge: '¿Qué te quita la paz?',
-      focus: '¿Qué buscás con orBit?',
+      focus: '¿Qué buscás con Velum?',
       volume: '¿Cuántos pedidos, más o menos?',
     },
     otherPlaceholder: {
@@ -522,7 +522,7 @@ const es = {
       growing: 'Equipo en crecimiento',
     },
     teamSizeDesc: {
-      solo: 'orBit se adapta a tu ritmo sin complicarte.',
+      solo: 'Velum se adapta a tu ritmo sin complicarte.',
       small: 'Todos en la misma página, sin caos.',
       growing: 'Orden para que escales con calma.',
     },
@@ -553,13 +553,13 @@ const es = {
       orders: 'Del pedido al cobro, en un solo lugar.',
       stock: 'Alertas antes de que falte.',
       payments: 'Ver quién debe y cuánto, claro.',
-      everything: 'orBit ordena por vos, paso a paso.',
+      everything: 'Velum ordena por vos, paso a paso.',
       other: 'Describilo con tus palabras.',
     },
     step4Eyebrow: 'Tu manera de triunfar',
     step4Title: '¿Qué sería un gran día para vos?',
     step4Subtitle: 'No hay respuesta incorrecta. Configuramos tu panel para eso.',
-    successFocus: 'Con orBit quiero sentirme más…',
+    successFocus: 'Con Velum quiero sentirme más…',
     focus: {
       calm: 'Tranquilo/a — mañanas sin caos',
       sales: 'Enfocado/a en vender más',
@@ -595,7 +595,7 @@ const es = {
     step6Eyebrow: 'Tu marca',
     step6Title: 'Colores de tu espacio',
     step6Subtitle:
-      'Esto pinta botones y acentos en tu panel. Cada tenant se ve distinto — nadie de orBit lo hace por vos.',
+      'Esto pinta botones y acentos en tu panel. Cada tenant se ve distinto — nadie de Velum lo hace por vos.',
     step7Eyebrow: 'Tu panel',
     step7Title: 'Armá tu dashboard',
     step7Subtitle:
@@ -603,7 +603,8 @@ const es = {
     step7Hint:
       'Podés cambiar layout, tamaños y widgets en cualquier momento desde Personalizar en Hoy.',
     brandPresets: {
-      orbit: 'Naranja orBit',
+      velum: 'Ámbar Velum',
+      orbit: 'Ámbar Velum',
       ocean: 'Azul océano',
       forest: 'Verde bosque',
       grape: 'Violeta',
@@ -645,8 +646,8 @@ const es = {
       'Pago seguro con Tilopay (tarjeta, SINPE y más). Sin Stripe. En desarrollo local, si Tilopay falla, el pago se simula para que pruebes el flujo.',
     step8Cta: 'Activar suscripción',
     step8Activating: 'Preparando pago seguro…',
-    step8Error: 'No pudimos iniciar el pago. Intentá de nuevo o escribinos a hola@orbit.cr',
-    successPageTitle: '¡Bienvenido/a a orBit!',
+    step8Error: 'No pudimos iniciar el pago. Intentá de nuevo o escribinos a noreply@orbitplatform.net',
+    successPageTitle: '¡Bienvenido/a a Velum!',
     successPageBody:
       'Tu suscripción está activa. Tu panel, colores y widgets ya están listos — como cliente estrella, tenés nuestro equipo atento a vos.',
     successPageVip: 'Cualquier duda, respondemos rápido. No estás solo/a en esto.',
@@ -655,7 +656,7 @@ const es = {
     errorMigration:
       'Falta aplicar la migración de Supabase. En el SQL Editor ejecutá los archivos en supabase/migrations/, luego recargá esta página.',
     errorLink: 'Error al vincular tu cuenta.',
-    welcomeBannerTitle: '¡{business} ya es tuyo en orBit!',
+    welcomeBannerTitle: '¡{business} ya es tuyo en Velum!',
     welcomeBannerTitleNamed: '{name}, {business} ya es tuyo',
     welcomeBannerDefault:
       'Empezá con una venta o una consulta. Cada mañana verás solo lo urgente, sin ruido.',
@@ -805,7 +806,7 @@ const es = {
       insights: {
         default: {
           default:
-            'orBit se adapta a tu negocio: una sola pantalla para lo que importa, sin ruido.',
+            'Velum se adapta a tu negocio: una sola pantalla para lo que importa, sin ruido.',
           calm: 'Respirá: hoy solo verás lo que merece tu atención.',
           sales: 'Cada consulta es una oportunidad; te las ordenamos por vos.',
           organized: 'Tu negocio, finalmente en un solo lugar.',
@@ -896,9 +897,9 @@ const es = {
     },
     integrations: {
       title: 'Integraciones',
-      whatTitle: 'orBit Connect',
+      whatTitle: 'Velum Connect',
       whatBody:
-        'Conectá tu tienda online u otra app para que cada pedido entre solo en orBit. orBit clasifica el pedido según tu rubro (preparación, cobro, etc.) y lo vincula con clientes y productos cuando puede.',
+        'Conectá tu tienda online u otra app para que cada pedido entre solo en Velum. Velum clasifica el pedido según tu rubro (preparación, cobro, etc.) y lo vincula con clientes y productos cuando puede.',
       endpoint: 'URL del webhook',
       copy: 'Copiar',
       copied: 'Copiado',
@@ -923,14 +924,14 @@ const es = {
       title: 'Ajustes',
       preferences: 'Preferencias',
       language: 'Idioma de la app',
-      languageHint: 'Los textos de orBit, menús y mensajes del sistema.',
+      languageHint: 'Los textos de Velum, menús y mensajes del sistema.',
       navPreferences: 'Preferencias',
       navProfile: 'Perfil',
       navBusiness: 'Negocio',
       navSecurity: 'Cuenta y seguridad',
       tenantPreferences: 'Preferencias del tenant',
       theme: 'Tema',
-      themeHint: 'Cómo se ve orBit en tu dispositivo.',
+      themeHint: 'Cómo se ve Velum en tu dispositivo.',
       themeAuto: 'Auto',
       themeLight: 'Claro',
       themeDark: 'Oscuro',
@@ -962,7 +963,7 @@ const es = {
       switchTenant: 'Cambiar tenant',
       switchTenantTitle: 'Cambiar tenant',
       switchTenantDescription:
-        'Seleccioná la organización con la que querés seguir trabajando en orBit.',
+        'Seleccioná la organización con la que querés seguir trabajando en Velum.',
       switchTenantConfirm: 'Cambiar',
       tenantSwitched: 'Tenant cambiado',
       email: 'Correo de acceso',
@@ -1083,12 +1084,13 @@ const es = {
       import: 'Importar',
       exportNameLabel: 'Nombre del dashboard',
       exportNamePlaceholder: 'Ej. Panel ventas LATAM',
-      exportDescription: 'Layout exportado desde orBit',
+      exportDescription: 'Layout exportado desde Velum',
       layoutSaved: 'Panel personalizado guardado',
       importSuccess: 'Layout «{name}» cargado. Guardá para aplicarlo.',
       importErrors: {
         invalid_json: 'El archivo no es JSON válido.',
-        missing_orbit_dashboard: 'No es un dashboard de orBit.',
+        missing_velum_dashboard: 'No es un dashboard de Velum.',
+        missing_orbit_dashboard: 'No es un dashboard de Velum.',
         missing_widgets: 'El archivo no tiene widgets.',
         no_valid_widgets: 'Ningún widget válido en el archivo.',
       },
@@ -1107,12 +1109,12 @@ const es = {
         recentLeadsDesc: 'Personas que esperan tu respuesta',
         lowStock: 'Alertas de stock',
         lowStockDesc: 'Productos en o bajo el mínimo',
-        aiAssistant: 'Asistente orBit',
+        aiAssistant: 'Asistente Velum',
         aiAssistantDesc: 'Resumen inteligente del día según tu negocio',
       },
     },
     ai: {
-      title: 'Asistente orBit',
+      title: 'Asistente Velum',
       subtitle: 'Resumen del día según tus ventas, consultas y stock',
       brief: {
         priorities: 'Tenés {count} prioridades hoy ({high} urgentes). Empezá por las rojas.',

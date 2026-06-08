@@ -13,6 +13,7 @@ import {
   getSystemTheme,
   resolveTheme,
   THEME_STORAGE_KEY,
+  THEME_STORAGE_KEY_LEGACY,
   type Theme,
 } from '@/components/theme/theme'
 
@@ -27,7 +28,8 @@ const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 function readStoredTheme(): Theme {
   if (typeof window === 'undefined') return 'system'
-  const stored = localStorage.getItem(THEME_STORAGE_KEY)
+  const stored =
+    localStorage.getItem(THEME_STORAGE_KEY) ?? localStorage.getItem(THEME_STORAGE_KEY_LEGACY)
   if (stored === 'light' || stored === 'dark' || stored === 'system') return stored
   return 'system'
 }

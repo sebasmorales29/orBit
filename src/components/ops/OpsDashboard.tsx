@@ -51,7 +51,7 @@ export function OpsDashboard({ stats }: { stats: PlatformStats }) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            orBit Platform
+            Velum Platform
           </h1>
           <p className="mt-1 text-[14px] text-muted">
             Vista global de tenants, actividad y revenue. Actualizado{' '}
@@ -93,7 +93,7 @@ export function OpsDashboard({ stats }: { stats: PlatformStats }) {
           <StatCard
             label="Provisionados (ops)"
             value={String(stats.tenantsOps)}
-            hint="Creados desde orBit Platform"
+            hint="Creados desde Velum Platform"
             href="/ops/tenants?source=ops"
           />
           <StatCard

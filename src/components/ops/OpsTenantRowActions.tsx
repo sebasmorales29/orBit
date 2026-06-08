@@ -30,7 +30,7 @@ export function OpsTenantRowActions({
     <div className="flex flex-wrap gap-2">
       <OpsSuperAdminConfirmModal
         open={open === 'suspend'}
-        title={`orBit Platform — ${isSuspended ? 'Activar tenant' : 'Desactivar tenant'}`}
+        title={`Velum Platform — ${isSuspended ? 'Activar tenant' : 'Desactivar tenant'}`}
         message={
           isSuspended
             ? `Vas a reactivar “${tenant.name}”. Sus usuarios podrán volver a operar si no están desactivados.`
@@ -71,7 +71,7 @@ export function OpsTenantRowActions({
 
       <OpsSuperAdminConfirmModal
         open={open === 'delete'}
-        title="orBit Platform — Eliminar tenant"
+        title="Velum Platform — Eliminar tenant"
         message={`Vas a eliminar “${tenant.name}” y TODOS sus datos. Además se desactivarán sus usuarios. Esta acción no se puede deshacer.`}
         confirmText="Eliminar"
         tone="danger"

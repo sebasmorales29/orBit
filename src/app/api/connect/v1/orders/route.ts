@@ -48,7 +48,7 @@ export async function POST(request: Request) {
   const secret = extractBearerToken(request.headers.get('authorization'))
   if (!secret) {
     return NextResponse.json(
-      { error: 'UNAUTHORIZED', message: 'Usá Authorization: Bearer <tu_clave_orbit>' },
+      { error: 'UNAUTHORIZED', message: 'Usá Authorization: Bearer <tu_clave_velum>' },
       { status: 401 }
     )
   }
@@ -134,10 +134,10 @@ export async function POST(request: Request) {
 
 export async function GET() {
   return NextResponse.json({
-    name: 'orBit Connect',
+    name: 'Velum Connect',
     version: 1,
     endpoint: 'POST /api/connect/v1/orders',
     auth: 'Authorization: Bearer <webhook_secret>',
-    docs: 'https://orbit.app/docs/connect',
+    docs: '/integraciones',
   })
 }

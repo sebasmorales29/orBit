@@ -167,7 +167,7 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
             <Link
               href="/signup"
               className={cn(
-                'hidden rounded-full border border-border bg-surface-raised px-3.5 py-2 text-[13px] font-medium text-foreground hover:bg-surface-hover sm:inline-flex sm:px-4',
+                'hidden rounded-full border border-border bg-surface-raised px-3 py-1.5 text-[13px] font-medium text-foreground hover:bg-surface-hover sm:inline-flex',
                 transitionColors,
                 interactivePressClass
               )}
@@ -181,7 +181,7 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
                 setActiveId('contacto')
               }}
               className={cn(
-                'hidden rounded-full bg-foreground px-4 py-2 text-[13px] font-medium text-surface hover:opacity-95 sm:inline-flex sm:px-5 sm:py-2.5 sm:text-[14px]',
+                'hidden rounded-full bg-foreground px-3.5 py-1.5 text-[13px] font-medium text-surface hover:opacity-95 sm:inline-flex',
                 interactivePressSolidClass
               )}
             >
@@ -253,21 +253,21 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
             <Link
               href="/signup"
               onClick={() => setMobileOpen(false)}
-              className="rounded-full bg-foreground py-3 text-center text-[14px] font-medium text-surface"
+              className="rounded-full bg-foreground py-2.5 text-center text-[13px] font-medium text-surface"
             >
               {t('nav.getStarted')}
             </Link>
             <Link
               href="/login"
               onClick={() => setMobileOpen(false)}
-              className="rounded-full border border-border py-3 text-center text-[14px] font-medium text-foreground"
+              className="rounded-full border border-border py-2.5 text-center text-[13px] font-medium text-foreground"
             >
               {t('nav.signIn')}
             </Link>
             <a
               href="#contacto"
               onClick={() => setMobileOpen(false)}
-              className="rounded-full border border-border py-3 text-center text-[14px] font-medium text-muted"
+              className="rounded-full border border-border py-2.5 text-center text-[13px] font-medium text-muted"
             >
               {t('nav.requestDemo')}
             </a>

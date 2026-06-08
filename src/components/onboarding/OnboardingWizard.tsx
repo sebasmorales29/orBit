@@ -102,7 +102,7 @@ export function OnboardingWizard() {
   const [currency, setCurrency] = useState<CurrencyCode>('CRC')
   const [usesStock, setUsesStock] = useState(true)
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanId>('profesional')
-  const [brandPreset, setBrandPreset] = useState<BrandPresetId>('orbit')
+  const [brandPreset, setBrandPreset] = useState<BrandPresetId>('velum')
   const [customAccent, setCustomAccent] = useState('#d65a31')
   const [widgetPrefs, setWidgetPrefs] = useState<Partial<Record<DashboardWidgetId, boolean>>>(
     {}

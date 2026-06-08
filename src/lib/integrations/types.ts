@@ -1,4 +1,4 @@
-/** orBit Connect v1 — cuerpo para pedidos entrantes desde tienda / webhook. */
+/** Velum Connect v1 — cuerpo para pedidos entrantes desde tienda / webhook. */
 export type OrbitConnectOrderPayload = {
   event?: 'order.created' | 'order.updated'
   /** ID único en el sistema origen (evita duplicados). */

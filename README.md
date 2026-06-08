@@ -1,6 +1,6 @@
-# orBit App
+# Velum
 
-App producto de orBit — Fase 1 MVP.
+CRM operativo para PYMEs — capa fina que ordena consultas, ventas, inventario y cobros.
 
 ## Stack
 
@@ -12,8 +12,8 @@ App producto de orBit — Fase 1 MVP.
 ## Setup
 
 1. Crear proyecto en [Supabase](https://supabase.com)
-2. Ejecutar migración: `supabase/migrations/20250530000001_initial_schema.sql` (ver `supabase/README.md`)
-3. Copiar env vars:
+2. Ejecutar migraciones en `supabase/migrations/` (ver `supabase/README.md`)
+3. Copiar variables de entorno:
 
 ```bash
 cp .env.example .env.local
@@ -28,35 +28,14 @@ npm run dev
 
 App en `http://localhost:3000`
 
-## Pantallas
+## Marca y variables
 
-| Ruta | Módulo |
-|------|--------|
-| `/hoy` | Panel del día (widgets + asistente IA) |
-| `/ventas` | Ventas y consultas en seguimiento |
-| `/consultas` | Consultas / interesados |
-| `/clientes` | Clientes |
-| `/stock` | Inventario y costos |
-| `/metricas` | Ingresos, cobros y ganancia |
-| `/integraciones` | orBit Connect (API de pedidos) |
+- Nombre de producto: **Velum**
+- Integraciones: **Velum Connect** (`/api/connect/v1/orders`)
+- Consola interna: `/ops` (**Velum Platform**)
+- Variables de entorno nuevas usan prefijo `VELUM_*`; `ORBIT_*` sigue como fallback.
 
-## Estructura
+## Documentación
 
-```
-src/
-  app/
-    (app)/          # Rutas autenticadas con nav
-    (auth)/         # Login / signup
-    onboarding/     # Wizard 5 min
-  components/
-  lib/
-    supabase/
-    hoy/            # Lógica del panel Hoy
-  types/
-```
-
-## Deploy
-
-- Frontend: Vercel
-- Backend: Supabase
-- Landing (separada): `../orbit/` en Vercel
+- `docs/BILLING_COSTA_RICA.md`
+- `docs/CRON_RENOVACIONES.md`

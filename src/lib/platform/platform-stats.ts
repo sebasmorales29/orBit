@@ -152,7 +152,7 @@ export async function getPlatformStats(): Promise<PlatformStatsResult> {
       gate.reason === 'unauthenticated'
         ? 'Sesión expirada. Volvé a iniciar sesión y abrí /ops de nuevo.'
         : gate.reason === 'not_configured'
-          ? 'Ops no está configurado en el servidor (ORBIT_PLATFORM_SUPER_ADMIN_EMAIL).'
+          ? 'Ops no está configurado en el servidor (VELUM_PLATFORM_SUPER_ADMIN_EMAIL).'
           : 'Tu cuenta no tiene acceso a Operaciones.'
     return { ok: false, code: 'NOT_AUTHORIZED', message }
   }

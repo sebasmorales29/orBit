@@ -1,11 +1,13 @@
 export type BrandPresetId =
-  | 'orbit'
+  | 'velum'
   | 'ocean'
   | 'forest'
   | 'grape'
   | 'slate'
   | 'rose'
   | 'custom'
+  /** @deprecated Usá `velum`. Se mantiene por tenants existentes. */
+  | 'orbit'
 
 export interface TenantBrandTheme {
   presetId: BrandPresetId
@@ -14,15 +16,27 @@ export interface TenantBrandTheme {
 }
 
 export const BRAND_PRESETS: Record<
-  Exclude<BrandPresetId, 'custom'>,
+  Exclude<BrandPresetId, 'custom' | 'orbit'>,
   { accent: string; accentSoft: string }
 > = {
-  orbit: { accent: '#d65a31', accentSoft: 'rgb(214 90 49 / 0.12)' },
+  velum: { accent: '#d65a31', accentSoft: 'rgb(214 90 49 / 0.12)' },
   ocean: { accent: '#0ea5e9', accentSoft: 'rgb(14 165 233 / 0.12)' },
   forest: { accent: '#059669', accentSoft: 'rgb(5 150 105 / 0.12)' },
   grape: { accent: '#7c3aed', accentSoft: 'rgb(124 58 237 / 0.12)' },
   slate: { accent: '#475569', accentSoft: 'rgb(71 85 105 / 0.12)' },
   rose: { accent: '#e11d48', accentSoft: 'rgb(225 29 72 / 0.12)' },
+}
+
+type CorePresetId = keyof typeof BRAND_PRESETS
+
+const LEGACY_PRESET_ALIASES: Record<string, CorePresetId> = {
+  orbit: 'velum',
+}
+
+function normalizePresetId(raw: string): CorePresetId {
+  if (raw in BRAND_PRESETS) return raw as CorePresetId
+  if (raw in LEGACY_PRESET_ALIASES) return LEGACY_PRESET_ALIASES[raw]
+  return 'velum'
 }
 
 export function themeFromPreset(presetId: BrandPresetId, customAccent?: string): TenantBrandTheme {
@@ -34,19 +48,19 @@ export function themeFromPreset(presetId: BrandPresetId, customAccent?: string):
       accentSoft: hexToSoft(accent),
     }
   }
-  const preset = BRAND_PRESETS[presetId === 'custom' ? 'orbit' : presetId]
-  return { presetId: presetId === 'custom' ? 'orbit' : presetId, ...preset }
+  const normalized = presetId === 'custom' ? 'velum' : normalizePresetId(presetId)
+  const preset = BRAND_PRESETS[normalized]
+  return { presetId: normalized, ...preset }
 }
 
 export function parseBrandTheme(raw: unknown): TenantBrandTheme {
-  if (!raw || typeof raw !== 'object') return themeFromPreset('orbit')
+  if (!raw || typeof raw !== 'object') return themeFromPreset('velum')
   const o = raw as Record<string, unknown>
-  const presetId = typeof o.presetId === 'string' ? (o.presetId as BrandPresetId) : 'orbit'
-  if (presetId === 'custom' && typeof o.accent === 'string') {
+  const rawPreset = typeof o.presetId === 'string' ? o.presetId : 'velum'
+  if (rawPreset === 'custom' && typeof o.accent === 'string') {
     return themeFromPreset('custom', o.accent)
   }
-  if (presetId in BRAND_PRESETS) return themeFromPreset(presetId as Exclude<BrandPresetId, 'custom'>)
-  return themeFromPreset('orbit')
+  return themeFromPreset(rawPreset as BrandPresetId)
 }
 
 export function applyBrandThemeToDocument(theme: TenantBrandTheme) {

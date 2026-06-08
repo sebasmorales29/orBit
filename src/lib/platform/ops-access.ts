@@ -45,7 +45,7 @@ async function ensureSuper() {
       code: gate.reason === 'not_configured' ? 'ADMIN_NOT_CONFIGURED' as const : 'FORBIDDEN' as const,
       message:
         gate.reason === 'not_configured'
-          ? 'Configurá ORBIT_PLATFORM_SUPER_ADMIN_EMAIL en el servidor.'
+          ? 'Configurá VELUM_PLATFORM_SUPER_ADMIN_EMAIL en el servidor.'
           : 'Solo el super administrador puede gestionar accesos a /ops.',
     }
   }

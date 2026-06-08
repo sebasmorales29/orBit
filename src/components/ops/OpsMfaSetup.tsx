@@ -28,7 +28,7 @@ export function OpsMfaSetup({ hasVerifiedFactor, sessionAal2, nextHref = '/ops' 
     setLoading(true)
     const { data, error } = await supabase.auth.mfa.enroll({
       factorType: 'totp',
-      friendlyName: 'orBit Ops',
+      friendlyName: 'Velum Ops',
     })
     setLoading(false)
     if (error) {

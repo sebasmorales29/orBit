@@ -9,7 +9,8 @@ import { OnboardingOption } from '@/components/onboarding/OnboardingOption'
 import { useTranslations } from '@/components/i18n/LocaleProvider'
 import { cn } from '@/lib/utils'
 
-const PRESET_IDS: BrandPresetId[] = ['orbit', 'ocean', 'forest', 'grape', 'slate', 'rose', 'custom']
+const PRESET_IDS = ['velum', 'ocean', 'forest', 'grape', 'slate', 'rose', 'custom'] as const
+type PresetOption = (typeof PRESET_IDS)[number]
 
 export function OnboardingBrandStep({
   presetId,
@@ -34,7 +35,7 @@ export function OnboardingBrandStep({
       </header>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        {PRESET_IDS.filter((id) => id !== 'custom').map((id) => {
+        {PRESET_IDS.filter((id): id is Exclude<PresetOption, 'custom'> => id !== 'custom').map((id) => {
           const colors = BRAND_PRESETS[id]
           return (
             <button

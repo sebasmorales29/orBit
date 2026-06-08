@@ -203,7 +203,7 @@ export function OpsTenantDetail({ tenant, canDelete }: { tenant: TenantDetail; c
       />
       <OpsSuperAdminConfirmModal
         open={confirmDelete}
-        title="orBit Platform — Eliminar tenant"
+        title="Velum Platform — Eliminar tenant"
         message={`Vas a eliminar “${tenant.name}” y TODOS sus datos. Esta acción no se puede deshacer.`}
         confirmText="Eliminar tenant"
         tone="danger"
@@ -226,7 +226,7 @@ export function OpsTenantDetail({ tenant, canDelete }: { tenant: TenantDetail; c
       />
       <ConfirmModal
         open={!!revoke}
-        title="orBit Platform — Revocar invitación"
+        title="Velum Platform — Revocar invitación"
         message={revoke ? `Vas a revocar la invitación enviada a ${revoke.email}.` : ''}
         confirmText="Revocar"
         tone="danger"
@@ -241,7 +241,7 @@ export function OpsTenantDetail({ tenant, canDelete }: { tenant: TenantDetail; c
       />
       <ConfirmModal
         open={!!remove}
-        title="orBit Platform — Remover usuario"
+        title="Velum Platform — Remover usuario"
         message={
           remove
             ? `Vas a remover a ${remove.email ?? 'este usuario'} del tenant. Para volver a tener acceso debe ser invitado de nuevo.`
@@ -260,7 +260,7 @@ export function OpsTenantDetail({ tenant, canDelete }: { tenant: TenantDetail; c
       />
       <OpsSuperAdminConfirmModal
         open={confirmSuspend}
-        title={`orBit Platform — ${platformStatus === 'suspended' ? 'Activar tenant' : 'Desactivar tenant'}`}
+        title={`Velum Platform — ${platformStatus === 'suspended' ? 'Activar tenant' : 'Desactivar tenant'}`}
         message={
           platformStatus === 'suspended'
             ? `Vas a activar “${tenant.name}”.`

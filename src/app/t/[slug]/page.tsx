@@ -23,7 +23,7 @@ export default async function TenantPublicEntryPage({
         <div className="flex justify-center">
           <BrandLogo href="/" size={48} />
         </div>
-        <p className="mt-6 text-[11px] font-medium uppercase tracking-widest text-accent">orBit</p>
+        <p className="mt-6 text-[11px] font-medium uppercase tracking-widest text-accent">Velum</p>
         <h1 className="mt-2 text-2xl font-semibold text-foreground">{tenant.name}</h1>
         {tenant.is_demo && (
           <p className="mt-2 inline-block rounded-full bg-amber-500/15 px-3 py-1 text-[12px] text-amber-700 dark:text-amber-300">
@@ -42,7 +42,7 @@ export default async function TenantPublicEntryPage({
         <p className="mt-4 break-all text-[11px] text-muted-foreground">{publicUrl}</p>
       </div>
       <Link href="/" className="mt-8 text-[13px] text-muted hover:text-foreground">
-        ← Sitio de orBit
+        ← Sitio de Velum
       </Link>
     </div>
   )

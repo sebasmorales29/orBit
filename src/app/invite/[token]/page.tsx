@@ -39,7 +39,7 @@ export default async function InviteAcceptPage({
       <div className="mx-auto flex min-h-dvh max-w-xl items-center px-4 py-16">
         <div className="w-full rounded-3xl border border-border bg-surface p-6 shadow-2xl">
           <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
-            orBit · Invitación
+            Velum · Invitación
           </p>
           <h1 className="mt-2 text-2xl font-semibold text-foreground">
             Bienvenido a {inv.organization.name}

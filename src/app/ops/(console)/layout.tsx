@@ -1,6 +1,7 @@
 import { connection } from 'next/server'
 import { headers } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
+import { BRAND_PLATFORM } from '@/lib/brand'
 import { assertPlatformAdmin, isOpsAccessTableReady } from '@/lib/platform/admin'
 
 export const dynamic = 'force-dynamic'
@@ -29,7 +30,7 @@ export default async function OpsConsoleLayout({ children }: { children: React.R
           <div className="flex items-center gap-3">
             <BrandLogo href="/ops" size={36} />
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-widest text-accent">orBit Platform</p>
+              <p className="text-[11px] font-medium uppercase tracking-widest text-accent">{BRAND_PLATFORM}</p>
               <p className="text-[14px] font-semibold text-foreground">Operaciones</p>
             </div>
           </div>

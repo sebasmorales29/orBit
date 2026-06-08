@@ -80,7 +80,7 @@ export async function startSuperAdminEmailChallenge(
     return { ok: false, code: 'FAILED', message: error?.message ?? 'No se pudo crear el challenge.' }
   }
 
-  const subject = `orBit Platform — Código de confirmación`
+  const subject = `Velum Platform — Código de confirmación`
   const text = `Tu código de confirmación es: ${code}\n\nExpira en 10 minutos.\nSi vos no solicitaste esto, ignorá este correo.`
 
   const sent = await sendEmailResend({ to: gate.email, subject, text })

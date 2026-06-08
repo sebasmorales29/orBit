@@ -69,7 +69,7 @@ export async function prepareBillingCheckout(
       amountCents,
       currency: 'USD',
       perMonthUsd,
-      description: `orBit ${input.planId} · ${input.billingCycle}`,
+      description: `Velum ${input.planId} · ${input.billingCycle}`,
     },
     successUrl,
     cancelUrl,
