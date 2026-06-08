@@ -77,12 +77,20 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [navLinks])
 
-  const linkClass = (id: NavId, mobile = false) =>
+  /** Misma forma y tamaño que los links centrales (p. ej. Pricing). */
+  const navPillBase = (mobile = false) =>
     cn(
-      'rounded-full font-medium',
+      'rounded-full font-medium whitespace-nowrap',
       transitionColors,
       interactivePressClass,
-      mobile ? 'block w-fit px-4 py-2.5 text-[14px]' : 'px-3.5 py-2 text-[14px] lg:px-4',
+      mobile
+        ? 'block w-fit px-4 py-2.5 text-[14px]'
+        : 'inline-flex shrink-0 items-center px-3.5 py-2 text-[14px] lg:px-4'
+    )
+
+  const linkClass = (id: NavId, mobile = false) =>
+    cn(
+      navPillBase(mobile),
       activeId === id
         ? 'bg-surface-hover text-foreground'
         : 'text-muted hover:text-foreground'
@@ -152,14 +160,13 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
             )}
           </nav>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-3 md:justify-self-end">
+          <div className="ml-auto flex min-w-0 items-center gap-0.5 sm:gap-1 md:justify-self-end">
             {adminSlot}
             <Link
               href="/login"
               className={cn(
-                'hidden rounded-full px-3 py-1.5 text-[13px] font-medium leading-none text-muted hover:text-foreground sm:inline-flex sm:px-3.5',
-                transitionColors,
-                interactivePressClass
+                navPillBase(),
+                'hidden text-muted hover:text-foreground sm:inline-flex'
               )}
             >
               {t('nav.signIn')}
@@ -167,9 +174,8 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
             <Link
               href="/signup"
               className={cn(
-                'hidden rounded-full border border-border bg-surface-raised px-3 py-1.5 text-[13px] font-medium leading-none text-foreground hover:bg-surface-hover sm:inline-flex',
-                transitionColors,
-                interactivePressClass
+                navPillBase(),
+                'hidden border border-border bg-surface-raised text-foreground hover:bg-surface-hover sm:inline-flex'
               )}
             >
               {t('nav.getStarted')}
@@ -181,7 +187,8 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
                 setActiveId('contacto')
               }}
               className={cn(
-                'hidden rounded-full bg-foreground px-3 py-1.5 text-[13px] font-medium leading-none text-surface hover:opacity-95 sm:inline-flex',
+                navPillBase(),
+                'hidden bg-foreground text-surface hover:opacity-95 sm:inline-flex',
                 interactivePressSolidClass
               )}
             >
@@ -253,21 +260,30 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
             <Link
               href="/signup"
               onClick={() => setMobileOpen(false)}
-              className="rounded-full bg-foreground py-2 text-center text-[13px] font-medium leading-none text-surface"
+              className={cn(
+                navPillBase(true),
+                'w-full bg-foreground text-center text-surface'
+              )}
             >
               {t('nav.getStarted')}
             </Link>
             <Link
               href="/login"
               onClick={() => setMobileOpen(false)}
-              className="rounded-full border border-border py-2 text-center text-[13px] font-medium leading-none text-foreground"
+              className={cn(
+                navPillBase(true),
+                'w-full border border-border text-center text-foreground'
+              )}
             >
               {t('nav.signIn')}
             </Link>
             <a
               href="#contacto"
               onClick={() => setMobileOpen(false)}
-              className="rounded-full border border-border py-2 text-center text-[13px] font-medium leading-none text-muted"
+              className={cn(
+                navPillBase(true),
+                'w-full border border-border text-center text-muted'
+              )}
             >
               {t('nav.requestDemo')}
             </a>
