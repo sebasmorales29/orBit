@@ -110,10 +110,10 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
 
   const menuItemClass = (id: NavId) =>
     cn(
-      'group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[14px] font-medium transition-colors duration-200',
+      'group relative flex w-full items-center gap-2 rounded-xl border-l-2 py-2.5 pr-3 pl-2.5 text-left text-[14px] font-medium transition-[background-color,color,border-color] duration-200',
       activeId === id
-        ? 'bg-accent-soft text-foreground'
-        : 'text-muted hover:bg-surface-hover hover:text-foreground'
+        ? 'border-accent bg-accent-soft text-foreground'
+        : 'border-transparent text-muted hover:border-border hover:bg-surface-hover hover:text-foreground'
     )
 
   return (
@@ -163,11 +163,11 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
                   id="landing-nav-menu"
                   role="menu"
                   aria-label={t('nav.mobileNav')}
-                  className="nav-menu-panel absolute top-[calc(100%+0.5rem)] left-0 z-[70] min-w-[15.5rem]"
+                  className="nav-menu-panel absolute top-[calc(100%+0.5rem)] -left-3 z-[70] min-w-[14rem] sm:-left-4"
                 >
                   {/* Caret hacia el botón */}
                   <div
-                    className="absolute -top-1.5 left-3.5 h-3 w-3 rotate-45 border-t border-l border-border bg-surface-raised"
+                    className="absolute -top-1.5 left-[1.625rem] h-3 w-3 rotate-45 border-t border-l border-border bg-surface-raised"
                     aria-hidden
                   />
 
@@ -186,28 +186,6 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
 
                     <nav className="flex flex-col gap-0.5 px-2 pb-2">
                       {navLinks.map((link, index) => {
-                        const item = (
-                          <>
-                            <span
-                              className={cn(
-                                'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-[11px] font-semibold tabular-nums transition-colors',
-                                activeId === link.id
-                                  ? 'bg-accent text-on-accent'
-                                  : 'bg-surface-hover text-muted-foreground group-hover:text-foreground'
-                              )}
-                            >
-                              {String(index + 1).padStart(2, '0')}
-                            </span>
-                            <span className="flex-1">{link.label}</span>
-                            {activeId === link.id && (
-                              <span
-                                className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
-                                aria-hidden
-                              />
-                            )}
-                          </>
-                        )
-
                         const style = { animationDelay: `${60 + index * 45}ms` }
 
                         return link.id === 'top' ? (
@@ -219,7 +197,10 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
                             className={cn(menuItemClass('top'), 'nav-menu-item')}
                             style={style}
                           >
-                            {item}
+                            <span className="flex-1">{link.label}</span>
+                            {activeId === link.id && (
+                              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
+                            )}
                           </button>
                         ) : (
                           <a
@@ -230,7 +211,10 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
                             className={cn(menuItemClass(link.id), 'nav-menu-item')}
                             style={style}
                           >
-                            {item}
+                            <span className="flex-1">{link.label}</span>
+                            {activeId === link.id && (
+                              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
+                            )}
                           </a>
                         )
                       })}
