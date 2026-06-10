@@ -108,7 +108,7 @@ const en = {
     product: 'Product',
     pricing: 'Pricing',
     faq: 'FAQ',
-    signIn: 'Sign in',
+    signIn: 'Sign In',
     getStarted: 'Start',
     contact: 'Contact',
     contactUs: 'Contact us',

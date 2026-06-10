@@ -106,7 +106,7 @@ const es = {
     product: 'Producto',
     pricing: 'Precios',
     faq: 'FAQ',
-    signIn: 'Entrar',
+    signIn: 'Iniciar sesión',
     getStarted: 'Iniciar',
     contact: 'Contacto',
     contactUs: 'Contáctanos',
