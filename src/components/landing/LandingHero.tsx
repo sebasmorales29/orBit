@@ -42,7 +42,7 @@ export function LandingHero() {
             <Link
               href="/login"
               className={cn(
-                'inline-flex items-center justify-center rounded-full border border-border bg-white/80 px-6 py-3.5 text-[14px] font-medium text-foreground hover:bg-white hover:shadow-sm dark:bg-transparent dark:hover:bg-surface-raised',
+                'inline-flex items-center justify-center rounded-full border border-border bg-surface-raised px-6 py-3.5 text-[14px] font-medium text-foreground hover:bg-surface-hover',
                 interactivePressSolidClass
               )}
             >

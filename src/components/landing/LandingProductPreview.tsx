@@ -26,7 +26,7 @@ export function LandingProductPreview() {
   return (
     <div className="relative w-full lg:justify-self-end">
       <div className="pointer-events-none absolute -inset-6 rounded-3xl bg-accent/[0.06] blur-3xl dark:bg-foreground/[0.03]" />
-      <div className="relative overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-[0_12px_40px_rgb(22_24_28/0.08)] ring-1 ring-border-subtle dark:border-border dark:bg-surface-raised dark:shadow-sm dark:ring-border">
+      <div className="relative overflow-hidden rounded-2xl border border-border-subtle bg-surface-raised shadow-[0_12px_40px_rgb(22_24_28/0.08)] ring-1 ring-border-subtle dark:border-border dark:shadow-sm dark:ring-border">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div>
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">

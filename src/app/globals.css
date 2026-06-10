@@ -26,6 +26,7 @@
   --nav-text: #16181c;
   --hero-glow: rgb(214 90 49 / 0.05);
   --selection: rgb(214 90 49 / 0.18);
+  --scrim: rgb(22 24 28 / 0.42);
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --duration-fast: 150ms;
@@ -52,6 +53,7 @@
   --nav-text: #eeeeee;
   --hero-glow: rgb(238 238 238 / 0.06);
   --selection: rgb(214 90 49 / 0.35);
+  --scrim: rgb(0 0 0 / 0.62);
 }
 
 @theme inline {
@@ -70,6 +72,7 @@
   --color-nav-pill: var(--nav-pill);
   --color-nav-text: var(--nav-text);
   --color-on-accent: var(--on-accent);
+  --color-scrim: var(--scrim);
   --font-sans: var(--font-inter);
 }
 
@@ -134,6 +137,11 @@
       var(--hero-glow),
       transparent
     );
+  }
+
+  /** Overlay de modales/drawers — respeta claro/oscuro vía --scrim */
+  .bg-scrim {
+    background-color: var(--scrim);
   }
 
   .auth-mesh-dash {

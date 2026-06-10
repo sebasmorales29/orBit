@@ -109,7 +109,7 @@ export function LandingPricing() {
             <article
               key={planId}
               className={cn(
-                'relative flex flex-col rounded-2xl border bg-white p-6 shadow-[0_8px_32px_rgb(22_24_28/0.06)] sm:p-7 dark:bg-surface-raised dark:shadow-none',
+                'relative flex flex-col rounded-2xl border bg-surface-raised p-6 shadow-[0_8px_32px_rgb(22_24_28/0.06)] sm:p-7 dark:shadow-none',
                 popular
                   ? 'border-foreground/25 ring-2 ring-foreground/10 lg:scale-[1.02] lg:shadow-lg'
                   : 'border-border-subtle dark:border-border'

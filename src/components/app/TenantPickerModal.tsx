@@ -66,12 +66,12 @@ export function TenantPickerModal({
       {onCancel ? (
         <button
           type="button"
-          className="absolute inset-0 bg-black/55"
+          className="bg-scrim absolute inset-0"
           aria-label="Cerrar"
           onClick={onCancel}
         />
       ) : (
-        <div className="absolute inset-0 bg-black/55" />
+        <div className="bg-scrim absolute inset-0" />
       )}
       <div
         ref={dialogRef}

@@ -89,8 +89,8 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
       navPillBase(drawer),
       drawer &&
         (activeId === id
-          ? 'bg-white/10 font-semibold text-foreground'
-          : 'text-muted hover:bg-white/5 hover:text-foreground')
+          ? 'bg-surface-hover font-semibold text-foreground'
+          : 'text-muted hover:bg-surface-hover hover:text-foreground')
     )
 
   const closeDrawer = () => setDrawerOpen(false)
@@ -111,7 +111,7 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
         <div
           className={cn(
             landingContainerClass,
-            'pointer-events-auto rounded-2xl border-0 bg-white/90 shadow-[0_8px_30px_rgb(22_24_28/0.06)] ring-0 outline-none backdrop-blur-md dark:border-0 dark:bg-black dark:shadow-none dark:ring-0 dark:backdrop-blur-none sm:rounded-3xl'
+            'pointer-events-auto rounded-2xl border border-border-subtle bg-surface/95 shadow-[0_8px_30px_rgb(22_24_28/0.06)] ring-0 outline-none backdrop-blur-md dark:border-border dark:shadow-none sm:rounded-3xl'
           )}
         >
           <div className="flex h-14 items-center gap-2 px-2 sm:h-16 sm:gap-3 sm:px-3">
@@ -178,10 +178,9 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
         )}
         aria-hidden={!drawerOpen}
       >
-        {/* Overlay oscuro — sin blur pálido */}
         <div
           className={cn(
-            'absolute inset-0 bg-black/60',
+            'bg-scrim absolute inset-0',
             transitionFade,
             drawerOpen ? 'opacity-100' : 'opacity-0'
           )}
@@ -194,17 +193,16 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
           aria-modal="true"
           aria-label={t('nav.mobileNav')}
           className={cn(
-            'absolute inset-y-0 left-0 flex w-[min(100vw-3rem,18rem)] flex-col border-r border-white/10 bg-black shadow-2xl sm:w-72',
-            'dark:bg-black',
+            'absolute inset-y-0 left-0 flex w-[min(100vw-3rem,18rem)] flex-col border-r border-border bg-surface-raised text-foreground shadow-2xl sm:w-72',
             transitionReveal,
             drawerOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
           )}
         >
-          <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+          <div className="flex items-center justify-between border-b border-border px-5 py-4">
             <BrandLogo href="/" size={32} onClick={() => handleNavClick('top')} />
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground hover:bg-white/10"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground hover:bg-surface-hover"
               onClick={closeDrawer}
               aria-label={t('common.closeMenu')}
             >
@@ -237,7 +235,7 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
           </nav>
 
           {adminSlot && (
-            <div className="border-t border-white/10 px-4 py-4">{adminSlot}</div>
+            <div className="border-t border-border px-4 py-4">{adminSlot}</div>
           )}
         </aside>
       </div>

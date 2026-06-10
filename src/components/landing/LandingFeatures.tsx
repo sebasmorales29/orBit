@@ -20,7 +20,7 @@ export function LandingFeatures() {
         {features.map((f) => (
           <article
             key={f.title}
-            className="rounded-2xl border border-border-subtle bg-white p-8 shadow-[0_4px_24px_rgb(22_24_28/0.05)] sm:p-10 dark:border-border dark:bg-surface/80 dark:shadow-none dark:backdrop-blur-sm"
+            className="rounded-2xl border border-border-subtle bg-surface-raised p-8 shadow-[0_4px_24px_rgb(22_24_28/0.05)] sm:p-10 dark:border-border dark:shadow-none dark:backdrop-blur-sm"
           >
             <h3 className="text-[16px] font-semibold text-foreground">{f.title}</h3>
             <p className="mt-3 text-[14px] leading-relaxed text-muted">{f.description}</p>

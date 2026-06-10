@@ -1,0 +1,45 @@
+---
+description: Todos los componentes deben respetar el tema claro/oscuro vía tokens CSS
+alwaysApply: true
+---
+
+# Tema claro / oscuro (Velum)
+
+El toggle de tema aplica la clase `.dark` en `<html>`. **Ningún componente puede quedar fijo en un modo.**
+
+## Usar siempre tokens semánticos
+
+| Token Tailwind | Uso |
+|----------------|-----|
+| `bg-surface` | Fondos base (navbar, páginas) |
+| `bg-surface-raised` | Cards, paneles, drawer, modales |
+| `bg-surface-hover` | Hover de filas, links, botones ghost |
+| `bg-surface-card` | Bloques internos |
+| `text-foreground` | Texto principal |
+| `text-muted` | Texto secundario |
+| `border-border` | Bordes |
+| `bg-scrim` | Overlay de modales/drawers (`--scrim` en globals.css) |
+
+## Prohibido
+
+- `bg-black`, `bg-white`, `text-black`, `text-white` como fondo/texto principal de UI (salvo CTAs invertidos: `bg-foreground text-surface`)
+- `border-white/10`, `hover:bg-white/10` y similares hardcodeados
+- Pares `bg-white dark:bg-*` cuando un solo token basta (`bg-surface-raised`)
+- Colores hex fijos para superficies (`#0a0a0a`, `#ffffff`) en componentes de UI
+
+## Permitido
+
+- `bg-foreground text-surface` en botones primarios (invierten con el tema)
+- Colores de marca/accent (`text-accent`, `bg-accent`)
+- El toggle de tema puede usar colores fijos en la **pista** del switch
+
+## Al crear modales, drawers o popovers
+
+```tsx
+<div className="bg-scrim absolute inset-0" />
+<aside className="bg-surface-raised border-border text-foreground border-r" />
+```
+
+## Referencia
+
+Variables en `src/app/globals.css` (`:root` y `.dark`).

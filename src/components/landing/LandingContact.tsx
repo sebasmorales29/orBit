@@ -65,7 +65,7 @@ export function LandingContact() {
   if (sent) {
     return (
       <LandingSection id="contacto">
-        <div className="mx-auto max-w-2xl rounded-2xl border border-border-subtle bg-white p-8 dark:bg-surface-raised">
+        <div className="mx-auto max-w-2xl rounded-2xl border border-border-subtle bg-surface-raised p-8">
           <h2 className="text-xl font-semibold text-foreground">{t('landing.contact.successTitle')}</h2>
           <p className="mt-3 text-[15px] leading-relaxed text-muted">{t('landing.contact.successBody')}</p>
         </div>
@@ -85,7 +85,7 @@ export function LandingContact() {
 
         <form
           onSubmit={handleSubmit}
-          className="lg:col-span-8 space-y-5 rounded-2xl border border-border-subtle bg-white p-6 shadow-[0_8px_32px_rgb(22_24_28/0.06)] sm:p-8 dark:border-border dark:bg-surface-raised dark:shadow-none"
+          className="lg:col-span-8 space-y-5 rounded-2xl border border-border-subtle bg-surface-raised p-6 shadow-[0_8px_32px_rgb(22_24_28/0.06)] sm:p-8 dark:border-border dark:shadow-none"
         >
           <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden>
             <label htmlFor="website">Website</label>

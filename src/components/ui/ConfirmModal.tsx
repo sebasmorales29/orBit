@@ -50,7 +50,7 @@ export function ConfirmModal({
     <div className="fixed inset-0 z-[80] flex items-center justify-center px-4">
       <button
         type="button"
-        className="absolute inset-0 bg-black/50"
+        className="bg-scrim absolute inset-0"
         aria-label="Cerrar"
         onClick={onCancel}
       />

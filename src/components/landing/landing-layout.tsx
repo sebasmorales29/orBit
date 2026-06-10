@@ -32,7 +32,7 @@ export function LandingSection({
       className={cn(
         'border-t border-border-subtle py-20 sm:py-24',
         variant === 'raised'
-          ? 'bg-white/60 backdrop-blur-md dark:bg-surface-raised/40 dark:backdrop-blur-sm'
+          ? 'bg-surface-raised/60 backdrop-blur-md dark:backdrop-blur-sm'
           : 'bg-transparent',
         className
       )}
