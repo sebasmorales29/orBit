@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { LocaleProviderInner } from '@/components/i18n/LocaleProvider'
 import { ThemeProvider } from '@/components/theme/ThemeProvider'
+import { AuthRedirectHandler } from '@/components/auth/AuthRedirectHandler'
 import { AppDialogProvider } from '@/components/ui/app-dialog'
 import { ToastProvider } from '@/components/ui/toast'
 import { BRAND_NAME } from '@/lib/brand'
@@ -73,6 +74,7 @@ export default async function RootLayout({
         <LocaleProviderInner initialLocale={initialLocale}>
           <ThemeProvider>
             <ToastProvider>
+              <AuthRedirectHandler />
               <AppDialogProvider>{children}</AppDialogProvider>
             </ToastProvider>
           </ThemeProvider>

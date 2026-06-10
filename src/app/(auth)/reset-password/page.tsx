@@ -38,10 +38,26 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setHasSession(!!session)
-      setReady(true)
+
+    const syncSession = () => {
+      void supabase.auth.getSession().then(({ data: { session } }) => {
+        setHasSession(!!session)
+        setReady(true)
+      })
+    }
+
+    syncSession()
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' || session) {
+        setHasSession(!!session)
+        setReady(true)
+      }
     })
+
+    return () => subscription.unsubscribe()
   }, [])
 
   async function handleSubmit(e: React.FormEvent) {
