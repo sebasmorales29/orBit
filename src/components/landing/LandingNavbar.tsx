@@ -82,7 +82,7 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
       interactivePressClass,
       mobile
         ? 'flex w-full items-center justify-center px-4 py-3 text-[15px]'
-        : 'inline-flex shrink-0 items-center px-3.5 py-2 text-[14px] lg:px-4'
+        : 'inline-flex shrink-0 items-center px-3 py-2 text-[13px] xl:px-3.5 xl:text-[14px]'
     )
 
   const linkClass = (id: NavId, mobile = false) =>
@@ -114,12 +114,13 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
             'pointer-events-auto rounded-2xl border-0 bg-white/90 shadow-[0_8px_30px_rgb(22_24_28/0.06)] ring-0 outline-none backdrop-blur-md dark:border-0 dark:bg-black dark:shadow-none dark:ring-0 dark:backdrop-blur-none sm:rounded-3xl'
           )}
         >
-          <div className="flex h-14 items-center justify-between gap-3 px-2 sm:h-16 sm:px-3 lg:grid lg:h-[4.5rem] lg:grid-cols-[1fr_auto_1fr] lg:items-center">
-            <div className="flex min-w-0 shrink-0 items-center lg:justify-self-start">
+          <div className="relative flex h-14 items-center px-2 sm:h-16 sm:px-3 xl:h-[4.5rem]">
+            {/* Izquierda: logo */}
+            <div className="relative z-10 shrink-0">
               <BrandLogo
                 href="/"
                 size={40}
-                sizeMd={64}
+                sizeMd={52}
                 priority
                 onClick={() => {
                   closeMobile()
@@ -128,38 +129,40 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
               />
             </div>
 
-            {/* Desktop: links centrales */}
+            {/* Centro: links (absoluto, no compite con CTAs) */}
             <nav
-              className="hidden items-center justify-center gap-0.5 lg:flex"
+              className="pointer-events-none absolute inset-x-0 hidden items-center justify-center xl:flex"
               aria-label={t('nav.mobileNav')}
             >
-              {navLinks
-                .filter((link) => link.id !== 'contacto')
-                .map((link) =>
-                  link.id === 'top' ? (
-                    <button
-                      key={link.id}
-                      type="button"
-                      onClick={() => handleNavClick('top')}
-                      className={linkClass('top')}
-                    >
-                      {link.label}
-                    </button>
-                  ) : (
-                    <a
-                      key={link.id}
-                      href={link.href}
-                      onClick={() => handleNavClick(link.id)}
-                      className={linkClass(link.id)}
-                    >
-                      {link.label}
-                    </a>
-                  )
-                )}
+              <div className="pointer-events-auto flex items-center gap-0.5">
+                {navLinks
+                  .filter((link) => link.id !== 'contacto')
+                  .map((link) =>
+                    link.id === 'top' ? (
+                      <button
+                        key={link.id}
+                        type="button"
+                        onClick={() => handleNavClick('top')}
+                        className={linkClass('top')}
+                      >
+                        {link.label}
+                      </button>
+                    ) : (
+                      <a
+                        key={link.id}
+                        href={link.href}
+                        onClick={() => handleNavClick(link.id)}
+                        className={linkClass(link.id)}
+                      >
+                        {link.label}
+                      </a>
+                    )
+                  )}
+              </div>
             </nav>
 
-            {/* Desktop: CTAs */}
-            <div className="hidden min-w-0 items-center justify-end gap-0.5 lg:flex lg:justify-self-end lg:gap-1">
+            {/* Derecha: CTAs desktop */}
+            <div className="relative z-10 ml-auto hidden shrink-0 items-center gap-0.5 xl:flex xl:gap-1">
               {adminSlot}
               <Link
                 href="/login"
@@ -190,10 +193,10 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
               <ChromeControls className="shadow-none" />
             </div>
 
-            {/* Mobile: solo hamburguesa */}
+            {/* Móvil / tablet: hamburguesa */}
             <button
               type="button"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-foreground lg:hidden"
+              className="relative z-10 ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-foreground xl:hidden"
               onClick={() => setMobileOpen((o) => !o)}
               aria-expanded={mobileOpen}
               aria-controls="landing-mobile-menu"
@@ -208,7 +211,7 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
       {/* Mobile: menú pantalla completa */}
       <div
         className={cn(
-          'fixed inset-0 z-[60] lg:hidden',
+          'fixed inset-0 z-[60] xl:hidden',
           transitionFade,
           mobileOpen ? 'pointer-events-auto' : 'pointer-events-none'
         )}
