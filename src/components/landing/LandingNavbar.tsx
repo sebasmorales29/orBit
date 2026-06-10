@@ -1,14 +1,13 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import {
   interactivePressClass,
   interactivePressSolidClass,
   transitionColors,
-  transitionFade,
-  transitionReveal,
+  transitionIcon,
 } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 import { BrandLogo } from '@/components/brand/BrandLogo'
@@ -28,8 +27,9 @@ interface LandingNavbarProps {
 
 export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
   const { t } = useTranslations()
-  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const [activeId, setActiveId] = useState<NavId>('top')
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const navLinks = useMemo(
     () =>
@@ -44,11 +44,26 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
   )
 
   useEffect(() => {
-    document.body.style.overflow = drawerOpen ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
+    if (!menuOpen) return
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
     }
-  }, [drawerOpen])
+    const onPointer = (e: MouseEvent | TouchEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', onKey)
+    document.addEventListener('mousedown', onPointer)
+    document.addEventListener('touchstart', onPointer)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('mousedown', onPointer)
+      document.removeEventListener('touchstart', onPointer)
+    }
+  }, [menuOpen])
 
   useEffect(() => {
     const sectionIds: NavId[] = navLinks.filter((l) => l.id !== 'top').map((l) => l.id)
@@ -74,29 +89,17 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [navLinks])
 
-  const navPillBase = (drawer = false) =>
+  const navPillBase = () =>
     cn(
-      'rounded-full font-medium whitespace-nowrap',
+      'inline-flex shrink-0 items-center rounded-full px-3 py-1.5 text-[12px] font-medium whitespace-nowrap sm:px-3.5 sm:py-2 sm:text-[13px]',
       transitionColors,
-      interactivePressClass,
-      drawer
-        ? 'flex w-full items-center px-4 py-3 text-[15px]'
-        : 'inline-flex shrink-0 items-center px-3 py-1.5 text-[12px] sm:px-3.5 sm:py-2 sm:text-[13px]'
+      interactivePressClass
     )
 
-  const linkClass = (id: NavId, drawer = false) =>
-    cn(
-      navPillBase(drawer),
-      drawer &&
-        (activeId === id
-          ? 'bg-surface-hover font-semibold text-foreground'
-          : 'text-muted hover:bg-surface-hover hover:text-foreground')
-    )
-
-  const closeDrawer = () => setDrawerOpen(false)
+  const closeMenu = () => setMenuOpen(false)
 
   const handleNavClick = (id: NavId) => {
-    closeDrawer()
+    closeMenu()
     if (id === 'top') {
       scrollToTop()
       setActiveId('top')
@@ -105,140 +108,176 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
     }
   }
 
+  const menuItemClass = (id: NavId) =>
+    cn(
+      'group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[14px] font-medium transition-colors duration-200',
+      activeId === id
+        ? 'bg-accent-soft text-foreground'
+        : 'text-muted hover:bg-surface-hover hover:text-foreground'
+    )
+
   return (
-    <>
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4">
-        <div
-          className={cn(
-            landingContainerClass,
-            'pointer-events-auto rounded-2xl border border-border-subtle bg-surface/95 shadow-[0_8px_30px_rgb(22_24_28/0.06)] ring-0 outline-none backdrop-blur-md dark:border-border dark:shadow-none sm:rounded-3xl'
-          )}
-        >
-          <div className="flex h-14 items-center gap-2 px-2 sm:h-16 sm:gap-3 sm:px-3">
-            {/* Izquierda: menú + logo */}
-            <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4">
+      <div
+        className={cn(
+          landingContainerClass,
+          'pointer-events-auto overflow-visible rounded-2xl border border-border-subtle bg-surface/95 shadow-[0_8px_30px_rgb(22_24_28/0.06)] ring-0 outline-none backdrop-blur-md dark:border-border dark:shadow-none sm:rounded-3xl'
+        )}
+      >
+        <div className="flex h-14 items-center gap-2 overflow-visible px-2 sm:h-16 sm:gap-3 sm:px-3">
+          <div className="flex shrink-0 items-center gap-1 overflow-visible sm:gap-2">
+            {/* Menú anclado al hamburguesa */}
+            <div ref={menuRef} className="relative">
               <button
                 type="button"
-                onClick={() => setDrawerOpen((o) => !o)}
-                aria-expanded={drawerOpen}
-                aria-controls="landing-side-menu"
-                aria-label={drawerOpen ? t('common.closeMenu') : t('common.openMenu')}
+                onClick={() => setMenuOpen((o) => !o)}
+                aria-expanded={menuOpen}
+                aria-controls="landing-nav-menu"
+                aria-haspopup="menu"
+                aria-label={menuOpen ? t('common.closeMenu') : t('common.openMenu')}
                 className={cn(
-                  'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-foreground hover:bg-surface-hover sm:h-10 sm:w-10',
+                  'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-foreground sm:h-10 sm:w-10',
+                  menuOpen ? 'bg-surface-hover' : 'hover:bg-surface-hover',
                   transitionColors,
                   interactivePressClass
                 )}
               >
-                {drawerOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                <Menu
+                  className={cn(
+                    'absolute h-5 w-5',
+                    transitionIcon,
+                    menuOpen ? 'scale-75 opacity-0' : 'scale-100 opacity-100'
+                  )}
+                />
+                <X
+                  className={cn(
+                    'absolute h-5 w-5',
+                    transitionIcon,
+                    menuOpen ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
+                  )}
+                />
               </button>
-              <BrandLogo
-                href="/"
-                size={36}
-                sizeMd={48}
-                priority
-                onClick={() => {
-                  closeDrawer()
-                  setActiveId('top')
-                }}
-              />
+
+              {menuOpen && (
+                <div
+                  id="landing-nav-menu"
+                  role="menu"
+                  aria-label={t('nav.mobileNav')}
+                  className="nav-menu-panel absolute top-[calc(100%+0.5rem)] left-0 z-[70] min-w-[15.5rem]"
+                >
+                  {/* Caret hacia el botón */}
+                  <div
+                    className="absolute -top-1.5 left-3.5 h-3 w-3 rotate-45 border-t border-l border-border bg-surface-raised"
+                    aria-hidden
+                  />
+
+                  <div className="relative overflow-hidden rounded-2xl border border-border bg-surface-raised shadow-[0_16px_48px_rgb(22_24_28/0.14)] ring-1 ring-accent/15 dark:shadow-[0_20px_50px_rgb(0_0_0/0.45)]">
+                    {/* Acento superior */}
+                    <div
+                      className="h-[3px] w-full bg-gradient-to-r from-accent via-accent/60 to-transparent"
+                      aria-hidden
+                    />
+
+                    <div className="px-4 pt-3 pb-1">
+                      <p className="text-[10px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+                        {t('nav.mobileNav')}
+                      </p>
+                    </div>
+
+                    <nav className="flex flex-col gap-0.5 px-2 pb-2">
+                      {navLinks.map((link, index) => {
+                        const item = (
+                          <>
+                            <span
+                              className={cn(
+                                'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-[11px] font-semibold tabular-nums transition-colors',
+                                activeId === link.id
+                                  ? 'bg-accent text-on-accent'
+                                  : 'bg-surface-hover text-muted-foreground group-hover:text-foreground'
+                              )}
+                            >
+                              {String(index + 1).padStart(2, '0')}
+                            </span>
+                            <span className="flex-1">{link.label}</span>
+                            {activeId === link.id && (
+                              <span
+                                className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
+                                aria-hidden
+                              />
+                            )}
+                          </>
+                        )
+
+                        const style = { animationDelay: `${60 + index * 45}ms` }
+
+                        return link.id === 'top' ? (
+                          <button
+                            key={link.id}
+                            type="button"
+                            role="menuitem"
+                            onClick={() => handleNavClick('top')}
+                            className={cn(menuItemClass('top'), 'nav-menu-item')}
+                            style={style}
+                          >
+                            {item}
+                          </button>
+                        ) : (
+                          <a
+                            key={link.id}
+                            href={link.href}
+                            role="menuitem"
+                            onClick={() => handleNavClick(link.id)}
+                            className={cn(menuItemClass(link.id), 'nav-menu-item')}
+                            style={style}
+                          >
+                            {item}
+                          </a>
+                        )
+                      })}
+                    </nav>
+
+                    {adminSlot && (
+                      <div className="border-t border-border px-3 py-3">{adminSlot}</div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Derecha: idioma, tema, entrar, demo */}
-            <div className="ml-auto flex min-w-0 shrink-0 items-center gap-1 sm:gap-1.5">
-              {adminSlot}
-              <ChromeControls className="shadow-none" />
-              <Link
-                href="/login"
-                className={cn(navPillBase(), 'text-muted hover:text-foreground')}
-              >
-                {t('nav.signIn')}
-              </Link>
-              <a
-                href="#contacto"
-                onClick={() => setActiveId('contacto')}
-                className={cn(
-                  navPillBase(),
-                  'bg-foreground text-surface hover:opacity-95',
-                  interactivePressSolidClass
-                )}
-              >
-                {t('nav.requestDemo')}
-              </a>
-            </div>
+            <BrandLogo
+              href="/"
+              size={36}
+              sizeMd={48}
+              priority
+              onClick={() => {
+                closeMenu()
+                setActiveId('top')
+              }}
+            />
+          </div>
+
+          <div className="ml-auto flex min-w-0 shrink-0 items-center gap-1 sm:gap-1.5">
+            <ChromeControls className="shadow-none" />
+            <Link
+              href="/login"
+              className={cn(navPillBase(), 'text-muted hover:text-foreground')}
+            >
+              {t('nav.signIn')}
+            </Link>
+            <a
+              href="#contacto"
+              onClick={() => setActiveId('contacto')}
+              className={cn(
+                navPillBase(),
+                'bg-foreground text-surface hover:opacity-95',
+                interactivePressSolidClass
+              )}
+            >
+              {t('nav.requestDemo')}
+            </a>
           </div>
         </div>
-      </header>
-
-      {/* Drawer lateral */}
-      <div
-        className={cn(
-          'fixed inset-0 z-[60]',
-          transitionFade,
-          drawerOpen ? 'pointer-events-auto' : 'pointer-events-none'
-        )}
-        aria-hidden={!drawerOpen}
-      >
-        <div
-          className={cn(
-            'bg-scrim absolute inset-0',
-            transitionFade,
-            drawerOpen ? 'opacity-100' : 'opacity-0'
-          )}
-          onClick={closeDrawer}
-        />
-
-        <aside
-          id="landing-side-menu"
-          role="dialog"
-          aria-modal="true"
-          aria-label={t('nav.mobileNav')}
-          className={cn(
-            'absolute inset-y-0 left-0 flex w-[min(100vw-3rem,18rem)] flex-col border-r border-border bg-surface-raised text-foreground shadow-2xl sm:w-72',
-            transitionReveal,
-            drawerOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
-          )}
-        >
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <BrandLogo href="/" size={32} onClick={() => handleNavClick('top')} />
-            <button
-              type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground hover:bg-surface-hover"
-              onClick={closeDrawer}
-              aria-label={t('common.closeMenu')}
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 py-4" aria-label={t('nav.mobileNav')}>
-            {navLinks.map((link) =>
-              link.id === 'top' ? (
-                <button
-                  key={link.id}
-                  type="button"
-                  onClick={() => handleNavClick('top')}
-                  className={linkClass('top', true)}
-                >
-                  {link.label}
-                </button>
-              ) : (
-                <a
-                  key={link.id}
-                  href={link.href}
-                  onClick={() => handleNavClick(link.id)}
-                  className={linkClass(link.id, true)}
-                >
-                  {link.label}
-                </a>
-              )
-            )}
-          </nav>
-
-          {adminSlot && (
-            <div className="border-t border-border px-4 py-4">{adminSlot}</div>
-          )}
-        </aside>
       </div>
-    </>
+    </header>
   )
 }

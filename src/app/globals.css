@@ -144,6 +144,22 @@
     background-color: var(--scrim);
   }
 
+  .nav-menu-panel {
+    animation: nav-menu-enter 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+    transform-origin: top left;
+  }
+
+  .nav-menu-item {
+    animation: nav-menu-item 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-menu-panel,
+    .nav-menu-item {
+      animation: none;
+    }
+  }
+
   .auth-mesh-dash {
     animation: auth-mesh-dash 1.2s linear infinite;
   }
@@ -156,6 +172,28 @@
 @keyframes auth-mesh-dash {
   to {
     stroke-dashoffset: -32;
+  }
+}
+
+@keyframes nav-menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes nav-menu-item {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
