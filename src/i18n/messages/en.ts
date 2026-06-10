@@ -109,7 +109,7 @@ const en = {
     pricing: 'Pricing',
     faq: 'FAQ',
     signIn: 'Sign in',
-    getStarted: 'Get started',
+    getStarted: 'Start',
     contact: 'Contact',
     contactUs: 'Contact us',
     requestDemo: 'Request demo',

@@ -23,13 +23,12 @@ function scrollToTop() {
 }
 
 interface LandingNavbarProps {
-  /** Solo el super admin recibe este slot desde el servidor */
   adminSlot?: React.ReactNode
 }
 
 export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
   const { t } = useTranslations()
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [activeId, setActiveId] = useState<NavId>('top')
 
   const navLinks = useMemo(
@@ -45,11 +44,11 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
   )
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : ''
+    document.body.style.overflow = drawerOpen ? 'hidden' : ''
     return () => {
       document.body.style.overflow = ''
     }
-  }, [mobileOpen])
+  }, [drawerOpen])
 
   useEffect(() => {
     const sectionIds: NavId[] = navLinks.filter((l) => l.id !== 'top').map((l) => l.id)
@@ -75,28 +74,30 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [navLinks])
 
-  const navPillBase = (mobile = false) =>
+  const navPillBase = (drawer = false) =>
     cn(
       'rounded-full font-medium whitespace-nowrap',
       transitionColors,
       interactivePressClass,
-      mobile
-        ? 'flex w-full items-center justify-center px-4 py-3 text-[15px]'
-        : 'inline-flex shrink-0 items-center px-3 py-2 text-[13px] xl:px-3.5 xl:text-[14px]'
+      drawer
+        ? 'flex w-full items-center px-4 py-3 text-[15px]'
+        : 'inline-flex shrink-0 items-center px-3 py-1.5 text-[12px] sm:px-3.5 sm:py-2 sm:text-[13px]'
     )
 
-  const linkClass = (id: NavId, mobile = false) =>
+  const linkClass = (id: NavId, drawer = false) =>
     cn(
-      navPillBase(mobile),
-      activeId === id
-        ? 'bg-surface-hover text-foreground'
-        : 'text-muted hover:text-foreground'
+      navPillBase(drawer),
+      drawer
+        ? activeId === id
+          ? 'bg-surface-hover font-semibold text-foreground'
+          : 'text-muted hover:bg-surface-hover hover:text-foreground'
+        : ''
     )
 
-  const closeMobile = () => setMobileOpen(false)
+  const closeDrawer = () => setDrawerOpen(false)
 
   const handleNavClick = (id: NavId) => {
-    closeMobile()
+    closeDrawer()
     if (id === 'top') {
       scrollToTop()
       setActiveId('top')
@@ -107,6 +108,23 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
 
   return (
     <>
+      {/* Botón hamburguesa flotante — lateral izquierdo */}
+      <button
+        type="button"
+        onClick={() => setDrawerOpen((o) => !o)}
+        aria-expanded={drawerOpen}
+        aria-controls="landing-side-menu"
+        aria-label={drawerOpen ? t('common.closeMenu') : t('common.openMenu')}
+        className={cn(
+          'pointer-events-auto fixed left-4 top-[5.5rem] z-[55] flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white text-foreground shadow-[0_4px_20px_rgb(22_24_28/0.12)] backdrop-blur-sm dark:bg-surface sm:left-6 sm:top-[6rem] sm:h-12 sm:w-12',
+          transitionColors,
+          interactivePressClass
+        )}
+      >
+        {drawerOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+      </button>
+
+      {/* Navbar superior: logo + controles + CTAs */}
       <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4">
         <div
           className={cn(
@@ -114,62 +132,23 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
             'pointer-events-auto rounded-2xl border-0 bg-white/90 shadow-[0_8px_30px_rgb(22_24_28/0.06)] ring-0 outline-none backdrop-blur-md dark:border-0 dark:bg-black dark:shadow-none dark:ring-0 dark:backdrop-blur-none sm:rounded-3xl'
           )}
         >
-          <div className="relative flex h-14 items-center px-2 sm:h-16 sm:px-3 xl:h-[4.5rem]">
-            {/* Izquierda: logo */}
-            <div className="relative z-10 shrink-0">
+          <div className="flex h-14 items-center gap-2 px-2 sm:h-16 sm:gap-3 sm:px-3">
+            <div className="shrink-0 pl-1 sm:pl-0">
               <BrandLogo
                 href="/"
-                size={40}
-                sizeMd={52}
+                size={36}
+                sizeMd={48}
                 priority
                 onClick={() => {
-                  closeMobile()
+                  closeDrawer()
                   setActiveId('top')
                 }}
               />
             </div>
 
-            {/* Centro: links (absoluto, no compite con CTAs) */}
-            <nav
-              className="pointer-events-none absolute inset-x-0 hidden items-center justify-center xl:flex"
-              aria-label={t('nav.mobileNav')}
-            >
-              <div className="pointer-events-auto flex items-center gap-0.5">
-                {navLinks
-                  .filter((link) => link.id !== 'contacto')
-                  .map((link) =>
-                    link.id === 'top' ? (
-                      <button
-                        key={link.id}
-                        type="button"
-                        onClick={() => handleNavClick('top')}
-                        className={linkClass('top')}
-                      >
-                        {link.label}
-                      </button>
-                    ) : (
-                      <a
-                        key={link.id}
-                        href={link.href}
-                        onClick={() => handleNavClick(link.id)}
-                        className={linkClass(link.id)}
-                      >
-                        {link.label}
-                      </a>
-                    )
-                  )}
-              </div>
-            </nav>
-
-            {/* Derecha: CTAs desktop */}
-            <div className="relative z-10 ml-auto hidden shrink-0 items-center gap-0.5 xl:flex xl:gap-1">
+            <div className="ml-auto flex min-w-0 shrink-0 items-center gap-1 sm:gap-1.5">
               {adminSlot}
-              <Link
-                href="/login"
-                className={cn(navPillBase(), 'text-muted hover:text-foreground')}
-              >
-                {t('nav.signIn')}
-              </Link>
+              <ChromeControls className="shadow-none" />
               <Link
                 href="/signup"
                 className={cn(
@@ -190,66 +169,53 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
               >
                 {t('nav.requestDemo')}
               </a>
-              <ChromeControls className="shadow-none" />
             </div>
-
-            {/* Móvil / tablet: hamburguesa */}
-            <button
-              type="button"
-              className="relative z-10 ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-foreground xl:hidden"
-              onClick={() => setMobileOpen((o) => !o)}
-              aria-expanded={mobileOpen}
-              aria-controls="landing-mobile-menu"
-              aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
-            >
-              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile: menú pantalla completa */}
+      {/* Drawer lateral izquierdo */}
       <div
         className={cn(
-          'fixed inset-0 z-[60] xl:hidden',
+          'fixed inset-0 z-[60]',
           transitionFade,
-          mobileOpen ? 'pointer-events-auto' : 'pointer-events-none'
+          drawerOpen ? 'pointer-events-auto' : 'pointer-events-none'
         )}
-        aria-hidden={!mobileOpen}
+        aria-hidden={!drawerOpen}
       >
         <div
           className={cn(
-            'absolute inset-0 bg-foreground/20 backdrop-blur-sm',
+            'absolute inset-0 bg-foreground/25 backdrop-blur-[2px]',
             transitionFade,
-            mobileOpen ? 'opacity-100' : 'opacity-0'
+            drawerOpen ? 'opacity-100' : 'opacity-0'
           )}
-          onClick={closeMobile}
+          onClick={closeDrawer}
         />
 
-        <div
-          id="landing-mobile-menu"
+        <aside
+          id="landing-side-menu"
           role="dialog"
           aria-modal="true"
           aria-label={t('nav.mobileNav')}
           className={cn(
-            'absolute inset-x-0 top-0 flex max-h-[100dvh] flex-col overflow-y-auto bg-white shadow-xl dark:bg-surface',
+            'absolute inset-y-0 left-0 flex w-[min(100vw-3rem,18rem)] flex-col border-r border-border bg-white shadow-2xl dark:bg-surface sm:w-72',
             transitionReveal,
-            mobileOpen ? 'translate-y-0 opacity-100' : '-translate-y-3 opacity-0'
+            drawerOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
           )}
         >
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <BrandLogo href="/" size={36} onClick={() => handleNavClick('top')} />
+            <BrandLogo href="/" size={32} onClick={() => handleNavClick('top')} />
             <button
               type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full text-foreground"
-              onClick={closeMobile}
+              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground hover:bg-surface-hover"
+              onClick={closeDrawer}
               aria-label={t('common.closeMenu')}
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <nav className="flex flex-col gap-1 px-4 py-4" aria-label={t('nav.mobileNav')}>
+          <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 py-4" aria-label={t('nav.mobileNav')}>
             {navLinks.map((link) =>
               link.id === 'top' ? (
                 <button
@@ -273,44 +239,17 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
             )}
           </nav>
 
-          <div className="mt-auto flex flex-col gap-3 border-t border-border px-4 py-5">
+          <div className="flex flex-col gap-2 border-t border-border px-4 py-4">
             {adminSlot && <div className="px-1">{adminSlot}</div>}
-            <div className="flex justify-center px-1">
-              <ChromeControls />
-            </div>
-            <a
-              href="#contacto"
-              onClick={() => {
-                closeMobile()
-                setActiveId('contacto')
-              }}
-              className={cn(
-                navPillBase(true),
-                'bg-foreground text-surface',
-                interactivePressSolidClass
-              )}
-            >
-              {t('nav.requestDemo')}
-            </a>
-            <Link
-              href="/signup"
-              onClick={closeMobile}
-              className={cn(
-                navPillBase(true),
-                'border border-border bg-surface-raised text-foreground'
-              )}
-            >
-              {t('nav.getStarted')}
-            </Link>
             <Link
               href="/login"
-              onClick={closeMobile}
-              className={cn(navPillBase(true), 'text-muted')}
+              onClick={closeDrawer}
+              className={cn(linkClass('top', true), 'justify-center text-muted')}
             >
               {t('nav.signIn')}
             </Link>
           </div>
-        </div>
+        </aside>
       </div>
     </>
   )

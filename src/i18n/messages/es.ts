@@ -107,7 +107,7 @@ const es = {
     pricing: 'Precios',
     faq: 'FAQ',
     signIn: 'Entrar',
-    getStarted: 'Empezar',
+    getStarted: 'Iniciar',
     contact: 'Contacto',
     contactUs: 'Contáctanos',
     requestDemo: 'Solicitar demo',
