@@ -53,6 +53,39 @@ const themeScript = `
 })();
 `
 
+/** Antes de hidratar React: recovery/confirm en landing con ?code= o #hash */
+const authRedirectScript = `
+(function () {
+  try {
+    var path = window.location.pathname;
+    if (path === '/auth/callback' || path === '/auth/confirm' || path === '/reset-password') return;
+    var allowed = path === '/' || path === '/login' || path === '/signup' || path === '/forgot-password';
+    if (!allowed) return;
+
+    var hash = window.location.hash || '';
+    if (hash.indexOf('access_token') !== -1 && hash.indexOf('type=recovery') !== -1) {
+      window.location.replace('/reset-password' + hash);
+      return;
+    }
+
+    var params = new URLSearchParams(window.location.search);
+    var code = params.get('code');
+    var tokenHash = params.get('token_hash');
+    var type = params.get('type');
+    if (!code && !tokenHash) return;
+
+    var next = params.get('next');
+    if (!next) next = type === 'recovery' || (code && path === '/') ? '/reset-password' : '/onboarding';
+
+    var q = tokenHash
+      ? 'token_hash=' + encodeURIComponent(tokenHash) + '&type=' + encodeURIComponent(type || 'recovery') + '&next=' + encodeURIComponent(next)
+      : 'code=' + encodeURIComponent(code) + '&next=' + encodeURIComponent(next);
+    if (type && !tokenHash) q += '&type=' + encodeURIComponent(type);
+    window.location.replace('/auth/callback?' + q);
+  } catch (e) {}
+})();
+`
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -69,6 +102,7 @@ export default async function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: localeScript }} />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: authRedirectScript }} />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <LocaleProviderInner initialLocale={initialLocale}>

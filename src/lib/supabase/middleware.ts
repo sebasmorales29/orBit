@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { redirectAuthParamsToCallback } from '@/lib/auth/redirect-auth-params'
 import { getSupabaseEnv } from '@/lib/supabase/env'
 import {
   getOpsHost,
@@ -62,6 +63,9 @@ async function resolveSessionIdentity(
 }
 
 export async function updateSession(request: NextRequest) {
+  const authRedirect = redirectAuthParamsToCallback(request)
+  if (authRedirect) return authRedirect
+
   const pathname = request.nextUrl.pathname
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set('x-pathname', pathname)
@@ -161,7 +165,8 @@ export async function updateSession(request: NextRequest) {
   const isAuthRoute =
     pathname.startsWith('/login') ||
     pathname.startsWith('/signup') ||
-    pathname.startsWith('/forgot-password')
+    pathname.startsWith('/forgot-password') ||
+    pathname.startsWith('/auth/')
 
   const isResetPassword = pathname.startsWith('/reset-password')
 

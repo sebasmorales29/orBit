@@ -22,14 +22,9 @@ export function AuthRedirectHandler() {
     const supabase = createClient()
     const hash = window.location.hash
 
-    if (hash.includes('type=recovery')) {
+    if (hash.includes('access_token') && hash.includes('type=recovery')) {
       handled.current = true
-      void supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          window.history.replaceState(null, '', pathname + window.location.search)
-          router.replace('/reset-password')
-        }
-      })
+      router.replace(`/reset-password${hash}`)
       return
     }
 

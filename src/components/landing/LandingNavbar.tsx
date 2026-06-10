@@ -39,6 +39,7 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
         { id: 'features' as const, href: '#features', label: t('nav.product') },
         { id: 'pricing' as const, href: '#pricing', label: t('nav.pricing') },
         { id: 'faq' as const, href: '#faq', label: t('nav.faq') },
+        { id: 'contacto' as const, href: '#contacto', label: t('nav.contact') },
       ],
     [t]
   )
@@ -51,10 +52,7 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
   }, [mobileOpen])
 
   useEffect(() => {
-    const sectionIds: NavId[] = [
-      ...navLinks.filter((l) => l.id !== 'top').map((l) => l.id),
-      'contacto',
-    ]
+    const sectionIds: NavId[] = navLinks.filter((l) => l.id !== 'top').map((l) => l.id)
 
     const onScroll = () => {
       if (window.scrollY < 80) {
@@ -77,14 +75,13 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [navLinks])
 
-  /** Misma forma y tamaño que los links centrales (p. ej. Pricing). */
   const navPillBase = (mobile = false) =>
     cn(
       'rounded-full font-medium whitespace-nowrap',
       transitionColors,
       interactivePressClass,
       mobile
-        ? 'block w-fit px-4 py-2.5 text-[14px]'
+        ? 'flex w-full items-center justify-center px-4 py-3 text-[15px]'
         : 'inline-flex shrink-0 items-center px-3.5 py-2 text-[14px] lg:px-4'
     )
 
@@ -96,8 +93,10 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
         : 'text-muted hover:text-foreground'
     )
 
+  const closeMobile = () => setMobileOpen(false)
+
   const handleNavClick = (id: NavId) => {
-    setMobileOpen(false)
+    closeMobile()
     if (id === 'top') {
       scrollToTop()
       setActiveId('top')
@@ -108,128 +107,146 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
 
   return (
     <>
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:px-6 sm:pt-4">
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4">
         <div
           className={cn(
             landingContainerClass,
-            'pointer-events-auto rounded-3xl border-0 bg-white/90 shadow-[0_8px_30px_rgb(22_24_28/0.06)] ring-0 outline-none backdrop-blur-md dark:border-0 dark:bg-black dark:shadow-none dark:ring-0 dark:backdrop-blur-none'
+            'pointer-events-auto rounded-2xl border-0 bg-white/90 shadow-[0_8px_30px_rgb(22_24_28/0.06)] ring-0 outline-none backdrop-blur-md dark:border-0 dark:bg-black dark:shadow-none dark:ring-0 dark:backdrop-blur-none sm:rounded-3xl'
           )}
         >
-          <div
-            className={cn(
-              'flex h-16 items-center gap-4 px-1 sm:gap-6 sm:px-2 md:grid md:h-[4.5rem] md:grid-cols-[1fr_auto_1fr] md:items-center md:px-3'
-            )}
-          >
-          <div className="flex h-12 shrink-0 items-center md:h-16 md:justify-self-start">
-            <BrandLogo
-              href="/"
-              size={52}
-              sizeMd={64}
-              priority
-              onClick={() => {
-                setMobileOpen(false)
-                setActiveId('top')
-              }}
-            />
-          </div>
+          <div className="flex h-14 items-center justify-between gap-3 px-2 sm:h-16 sm:px-3 lg:grid lg:h-[4.5rem] lg:grid-cols-[1fr_auto_1fr] lg:items-center">
+            <div className="flex min-w-0 shrink-0 items-center lg:justify-self-start">
+              <BrandLogo
+                href="/"
+                size={40}
+                sizeMd={64}
+                priority
+                onClick={() => {
+                  closeMobile()
+                  setActiveId('top')
+                }}
+              />
+            </div>
 
-          <nav
-            className="hidden items-center justify-center gap-0.5 md:flex"
-            aria-label={t('nav.mobileNav')}
-          >
-            {navLinks.map((link) =>
-              link.id === 'top' ? (
-                <button
-                  key={link.id}
-                  type="button"
-                  onClick={() => handleNavClick('top')}
-                  className={linkClass('top')}
-                >
-                  {link.label}
-                </button>
-              ) : (
-                <a
-                  key={link.id}
-                  href={link.href}
-                  onClick={() => handleNavClick(link.id)}
-                  className={linkClass(link.id)}
-                >
-                  {link.label}
-                </a>
-              )
-            )}
-          </nav>
-
-          <div className="ml-auto flex min-w-0 items-center gap-0.5 sm:gap-1 md:justify-self-end">
-            {adminSlot}
-            <Link
-              href="/login"
-              className={cn(
-                navPillBase(),
-                'hidden text-muted hover:text-foreground sm:inline-flex'
-              )}
+            {/* Desktop: links centrales */}
+            <nav
+              className="hidden items-center justify-center gap-0.5 lg:flex"
+              aria-label={t('nav.mobileNav')}
             >
-              {t('nav.signIn')}
-            </Link>
-            <Link
-              href="/signup"
-              className={cn(
-                navPillBase(),
-                'hidden border border-border bg-surface-raised text-foreground hover:bg-surface-hover sm:inline-flex'
-              )}
-            >
-              {t('nav.getStarted')}
-            </Link>
-            <a
-              href="#contacto"
-              onClick={() => {
-                setMobileOpen(false)
-                setActiveId('contacto')
-              }}
-              className={cn(
-                navPillBase(),
-                'hidden bg-foreground text-surface hover:opacity-95 sm:inline-flex',
-                interactivePressSolidClass
-              )}
-            >
-              {t('nav.requestDemo')}
-            </a>
+              {navLinks
+                .filter((link) => link.id !== 'contacto')
+                .map((link) =>
+                  link.id === 'top' ? (
+                    <button
+                      key={link.id}
+                      type="button"
+                      onClick={() => handleNavClick('top')}
+                      className={linkClass('top')}
+                    >
+                      {link.label}
+                    </button>
+                  ) : (
+                    <a
+                      key={link.id}
+                      href={link.href}
+                      onClick={() => handleNavClick(link.id)}
+                      className={linkClass(link.id)}
+                    >
+                      {link.label}
+                    </a>
+                  )
+                )}
+            </nav>
 
-            <ChromeControls className="hidden shadow-none sm:flex" />
+            {/* Desktop: CTAs */}
+            <div className="hidden min-w-0 items-center justify-end gap-0.5 lg:flex lg:justify-self-end lg:gap-1">
+              {adminSlot}
+              <Link
+                href="/login"
+                className={cn(navPillBase(), 'text-muted hover:text-foreground')}
+              >
+                {t('nav.signIn')}
+              </Link>
+              <Link
+                href="/signup"
+                className={cn(
+                  navPillBase(),
+                  'border border-border bg-surface-raised text-foreground hover:bg-surface-hover'
+                )}
+              >
+                {t('nav.getStarted')}
+              </Link>
+              <a
+                href="#contacto"
+                onClick={() => setActiveId('contacto')}
+                className={cn(
+                  navPillBase(),
+                  'bg-foreground text-surface hover:opacity-95',
+                  interactivePressSolidClass
+                )}
+              >
+                {t('nav.requestDemo')}
+              </a>
+              <ChromeControls className="shadow-none" />
+            </div>
 
+            {/* Mobile: solo hamburguesa */}
             <button
               type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full text-foreground md:hidden"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-foreground lg:hidden"
               onClick={() => setMobileOpen((o) => !o)}
+              aria-expanded={mobileOpen}
+              aria-controls="landing-mobile-menu"
               aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
             >
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
-          </div>
         </div>
       </header>
 
+      {/* Mobile: menú pantalla completa */}
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-foreground/10 backdrop-blur-[2px] md:hidden',
+          'fixed inset-0 z-[60] lg:hidden',
           transitionFade,
-          mobileOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+          mobileOpen ? 'pointer-events-auto' : 'pointer-events-none'
         )}
-        onClick={() => setMobileOpen(false)}
-        aria-hidden
-      />
-
-      <div
-        className={cn(
-          'fixed top-[5.25rem] z-50 sm:top-[5.75rem] md:hidden',
-          transitionReveal,
-          landingContainerClass,
-          mobileOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-1 opacity-0'
-        )}
+        aria-hidden={!mobileOpen}
       >
-        <div className="rounded-3xl border border-border bg-white p-5 shadow-lg dark:bg-surface">
-          <nav className="flex flex-col gap-1" aria-label={t('nav.mobileNav')}>
+        <div
+          className={cn(
+            'absolute inset-0 bg-foreground/20 backdrop-blur-sm',
+            transitionFade,
+            mobileOpen ? 'opacity-100' : 'opacity-0'
+          )}
+          onClick={closeMobile}
+        />
+
+        <div
+          id="landing-mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('nav.mobileNav')}
+          className={cn(
+            'absolute inset-x-0 top-0 flex max-h-[100dvh] flex-col overflow-y-auto bg-white shadow-xl dark:bg-surface',
+            transitionReveal,
+            mobileOpen ? 'translate-y-0 opacity-100' : '-translate-y-3 opacity-0'
+          )}
+        >
+          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+            <BrandLogo href="/" size={36} onClick={() => handleNavClick('top')} />
+            <button
+              type="button"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-foreground"
+              onClick={closeMobile}
+              aria-label={t('common.closeMenu')}
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <nav className="flex flex-col gap-1 px-4 py-4" aria-label={t('nav.mobileNav')}>
             {navLinks.map((link) =>
               link.id === 'top' ? (
                 <button
@@ -252,41 +269,43 @@ export function LandingNavbar({ adminSlot }: LandingNavbarProps) {
               )
             )}
           </nav>
-          <div className="mt-5 flex flex-col gap-3 border-t border-border pt-5">
-            {adminSlot && <div className="flex justify-start px-4">{adminSlot}</div>}
-            <div className="flex justify-start">
+
+          <div className="mt-auto flex flex-col gap-3 border-t border-border px-4 py-5">
+            {adminSlot && <div className="px-1">{adminSlot}</div>}
+            <div className="flex justify-center px-1">
               <ChromeControls />
             </div>
-            <Link
-              href="/signup"
-              onClick={() => setMobileOpen(false)}
+            <a
+              href="#contacto"
+              onClick={() => {
+                closeMobile()
+                setActiveId('contacto')
+              }}
               className={cn(
                 navPillBase(true),
-                'w-full bg-foreground text-center text-surface'
+                'bg-foreground text-surface',
+                interactivePressSolidClass
+              )}
+            >
+              {t('nav.requestDemo')}
+            </a>
+            <Link
+              href="/signup"
+              onClick={closeMobile}
+              className={cn(
+                navPillBase(true),
+                'border border-border bg-surface-raised text-foreground'
               )}
             >
               {t('nav.getStarted')}
             </Link>
             <Link
               href="/login"
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                navPillBase(true),
-                'w-full border border-border text-center text-foreground'
-              )}
+              onClick={closeMobile}
+              className={cn(navPillBase(true), 'text-muted')}
             >
               {t('nav.signIn')}
             </Link>
-            <a
-              href="#contacto"
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                navPillBase(true),
-                'w-full border border-border text-center text-muted'
-              )}
-            >
-              {t('nav.requestDemo')}
-            </a>
           </div>
         </div>
       </div>
